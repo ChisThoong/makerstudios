@@ -171,11 +171,11 @@ const Section2 = () => {
           <div className="space-y-6 col-span-6">
             
             <div className="text-5xl sm:text-8xl font-bold text-gray-900 font-bebas text-center sm:text-left">
-                <h2 className= "text-6xl font-gilroy">MỘT TẬP THỂ </h2>
+                <h2 className= "text-6xl font-gilroy mb-3">MỘT TẬP THỂ </h2>
             <div>
                 <TypingWords
                 words={["ĐAM MÊ", "NHIỆT HUYẾT", "ĐỘT PHÁ"]}
-                className="text-blue-600 mt-20"
+                className="text-blue-600"
                 />
             </div>
             </div>

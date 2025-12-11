@@ -181,7 +181,7 @@ export default function Footer() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Your email address"
+                  placeholder="Nhập địa chỉ email"
                   className="w-full bg-white text-gray-900 px-4 py-3 rounded-2xl pr-12 focus:outline-none focus:ring-2 focus:ring-blue-600"
                 />
                 <button
