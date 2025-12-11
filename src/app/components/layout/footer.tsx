@@ -17,7 +17,7 @@ export default function Footer() {
   return (
     <footer className="relative bg-black/90 text-white ">
       {/* CTA Banner */}
-        <div className="relative max-w-7xl mx-auto px-4 scroll-item scroll-down">
+        <div className="relative max-w-7xl mx-auto px-4">
         <div
             className="
             rounded-4xl bg-gradient-to-r from-blue-700 to-blue-600 

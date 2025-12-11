@@ -248,3 +248,36 @@ body {
   }
 }
 
+
+/* Scrollbar Container */
+::-webkit-scrollbar {
+  width: 8px;      
+}
+
+/* Track (background của scrollbar) */
+::-webkit-scrollbar-track {
+  background: transparent;  
+}
+
+/* Thumb (phần kéo) */
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    135deg,
+    #1e3aff 0%,
+    #2654ff 50%,
+    #1e3aff 100%
+  );                        
+  border-radius: 20px;       
+}
+
+/* Hover effect */
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    135deg,
+    #3d63ff 0%,
+    #2f54ff 50%,
+    #3d63ff 100%
+  );
+}
+
+
