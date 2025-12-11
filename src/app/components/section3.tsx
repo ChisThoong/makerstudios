@@ -193,7 +193,7 @@ export default function StatisticsSection() {
         </div>
       )}
 
-      <div className="max-w-7xl mx-auto px-6 relative z-10">
+      <div className="max-w-7xl mx-auto relative z-10">
         {/* Header */}
         <div className="text-center mb-16">
           <div 
@@ -218,7 +218,7 @@ export default function StatisticsSection() {
         </div>
 
         {/* Games Grid - Featured Products */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-20">
           {/* Game 1 */}
           <div 
             ref={addToRefs}
@@ -357,72 +357,7 @@ export default function StatisticsSection() {
 
             </div>
         </div>
-
-          {/* Game 3 */}
-          <div 
-            ref={addToRefs}
-            className="scroll-item scroll-right group relative"
-            >
-            <div className="relative bg-white rounded-2xl overflow-hidden border-2 border-gray-100 hover:border-blue-200 transition-all duration-500 hover:shadow-xl hover:shadow-blue-100/50">
-                
-                {/* Game Thumbnail */}
-                <div className="aspect-[4/3] bg-gradient-to-br from-blue-500 to-blue-600 relative overflow-hidden">
-                
-                <img 
-                    src="/images/bg-pig.png" 
-                    alt="Game 1"
-                    className="w-full h-full object-cover opacity-90 group-hover:scale-110 transition-transform duration-700"
-                />
-
-                {/* Dark overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-                
-                {/*  GAME INFO OVERLAY — CORRECT POSITION */}
-                <div className="absolute bottom-0 left-0 right-0 px-4 py-3 z-20">
-
-                    <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-3 ">
-                    {/* Game Icon */}
-                    <img
-                        src="/images/pig-logo.png"
-                        alt="Pig Hunter"
-                        className="w-16 h-16 sm:w-20 sm:h-20 md:w-14 md:h-14 rounded-xl shadow-lg flex-shrink-0 p-0 m-0"
-                    />
-
-                    {/* Title + Buttons */}
-                    <div className="flex flex-col items-center sm:items-start ">
-
-                        <h1 
-                        className="text-xl sm:text-2xl md:tex-lg font-black text-white leading-tight text-center sm:text-left"
-                        style={{
-                            textShadow:
-                            '2px 2px 4px rgba(0,0,0,0.8), -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000'
-                        }}
-                        >
-                        PIG HUNTERS
-                        </h1>
-               
-                        <a
-                            href="https://pighuntersgame.com/"
-                            target="_blank"
-                            className="
-                                inline-flex items-center gap-2 
-                                bg-blue-600/90 backdrop-blur 
-                                text-white font-semibold 
-                                text-sm
-                                px-3 py-1 rounded-xl 
-                                shadow-md  
-                                hover:bg-blue-700 transition-all duration-300
-                            "
-                            >
-                            <span>Truy cập</span>
-                        </a>
-
-                    </div>
-                    </div>
-                </div>
-                </div>
-            </div>
-        </div>
+  
         </div>
       </div>
 
