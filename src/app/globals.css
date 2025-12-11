@@ -1,0 +1,250 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-gilroy);
+  --font-bebas: var(--font-bebas);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  
+}
+
+@keyframes float-slow {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(5deg);
+  }
+}
+
+@keyframes float-medium {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-30px) rotate(-5deg);
+  }
+}
+
+@keyframes float-fast {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-25px) rotate(8deg);
+  }
+}
+
+.animate-float-slow {
+  animation: float-slow 6s ease-in-out infinite;
+}
+
+.animate-float-medium {
+  animation: float-medium 5s ease-in-out infinite;
+}
+
+.animate-float-fast {
+  animation: float-fast 4s ease-in-out infinite;
+}
+@keyframes float-center {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(-15px) scale(1.02);
+  }
+}
+
+@keyframes float-top-left {
+  0%, 100% {
+    transform: translate(0px, 0px) rotate(0deg);
+  }
+  50% {
+    transform: translate(-10px, -15px) rotate(-5deg);
+  }
+}
+
+@keyframes float-left {
+  0%, 100% {
+    transform: translateX(0px) translateY(0px);
+  }
+  50% {
+    transform: translateX(-12px) translateY(-10px);
+  }
+}
+
+@keyframes float-top-center {
+  0%, 100% {
+    transform: translate(0px, 0px) rotate(0deg);
+  }
+  50% {
+    transform: translate(8px, -12px) rotate(3deg);
+  }
+}
+
+@keyframes float-bottom-right {
+  0%, 100% {
+    transform: translate(0px, 0px) rotate(0deg);
+  }
+  50% {
+    transform: translate(10px, 15px) rotate(5deg);
+  }
+}
+
+@keyframes float-bottom-left {
+  0%, 100% {
+    transform: translate(0px, 0px);
+  }
+  50% {
+    transform: translate(-8px, 12px);
+  }
+}
+
+
+
+.animate-float-center {
+  animation: float-center 4s ease-in-out infinite;
+}
+
+.animate-float-top-left {
+  animation: float-top-left 5s ease-in-out infinite;
+}
+
+.animate-float-left {
+  animation: float-left 4.5s ease-in-out infinite;
+}
+
+.animate-float-top-center {
+  animation: float-top-center 5.5s ease-in-out infinite;
+}
+
+.animate-float-bottom-right {
+  animation: float-bottom-right 4.8s ease-in-out infinite;
+}
+
+.animate-float-bottom-left {
+  animation: float-bottom-left 5.2s ease-in-out infinite;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.9); }
+  to { transform: scale(1); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.25s ease-out forwards;
+}
+
+.animate-scaleIn {
+  animation: scaleIn 0.25s ease-out forwards;
+}
+
+/* Modal Animations */
+@keyframes modalSlideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalSlideDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes modalScale {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* --- Base invisible state --- */
+.scroll-item {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: 
+    opacity 1s cubic-bezier(0.25, 0.1, 0.25, 1),
+    transform 1s cubic-bezier(0.25, 0.1, 0.25, 1);
+  will-change: transform, opacity;
+}
+
+/* --- When element is visible --- */
+.scroll-item.show {
+  opacity: 1;
+  transform: translate(0,0);
+}
+
+/* --- Directions --- */
+.scroll-left { transform: translateX(-40px); }
+.scroll-right { transform: translateX(40px); }
+.scroll-up { transform: translateY(40px); }
+.scroll-down { transform: translateY(-40px); }
+
+/* Visible state for all directions */
+.scroll-left.show,
+.scroll-right.show,
+.scroll-up.show,
+.scroll-down.show {
+  transform: translate(0,0);
+}
+@keyframes float {
+  0%, 100% { 
+    transform: translateY(0px) translateX(0px); 
+  }
+  25% { 
+    transform: translateY(-20px) translateX(10px); 
+  }
+  50% { 
+    transform: translateY(-40px) translateX(-10px); 
+  }
+  75% { 
+    transform: translateY(-20px) translateX(10px); 
+  }
+}
+
