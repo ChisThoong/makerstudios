@@ -132,9 +132,9 @@ const Section1 = () => {
           }`}>
             {/* Logo */}
             <div className="flex items-center justify-center sm:justify-start w-full">
-            <AnimatedTitle>
-              CHÚNG TÔI LÀ
-            </AnimatedTitle>
+              <AnimatedTitle>
+                CHÚNG TÔI LÀ
+              </AnimatedTitle>
             </div>
             
             {/* Heading */}

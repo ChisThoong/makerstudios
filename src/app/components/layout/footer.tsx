@@ -15,12 +15,12 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative bg-[#0a0e27] text-white ">
+    <footer className="relative bg-black/90 text-white ">
       {/* CTA Banner */}
-        <div className="relative max-w-7xl mx-auto px-4">
+        <div className="relative max-w-7xl mx-auto px-4 scroll-item scroll-down">
         <div
             className="
-            rounded-4xl bg-gradient-to-r from-blue-600 to-blue-500 
+            rounded-4xl bg-gradient-to-r from-blue-700 to-blue-600 
             py-12 px-6 md:px-12
             shadow-xl
             relative z-20
@@ -45,8 +45,10 @@ export default function Footer() {
             </div>
 
             {/* Button */}
-            <button className="bg-white text-blue-600 px-8 py-4 rounded-full font-semibold hover:bg-gray-100 transition-colors flex items-center gap-2">
-                Liên hệ với chúng tôi <ArrowRight size={20} />
+            <button className="inline-flex items-center gap-2 px-8 py-4 bg-white text-blue-600 font-semibold rounded-full hover:bg-white/90 transition-all hover:gap-3 group"
+            >
+                Liên hệ với chúng tôi 
+                <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />                
             </button>
 
             </div>
@@ -55,7 +57,7 @@ export default function Footer() {
 
 
       {/* Main Footer Content */}
-      <div className="max-w-7xl mx-auto px-4 py-4">
+      <div className="max-w-7xl mx-auto px-4 py-4 scroll-item scroll-up">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           {/* Company Info */}
           <div>
@@ -68,16 +70,16 @@ export default function Footer() {
               Maker Studios - We make games
             </p>
             <div className="flex gap-3">
-              <a href="#" className="w-10 h-10 border border-gray-600 rounded hover:bg-blue-600 hover:border-blue-600 transition-colors flex items-center justify-center">
+              <a href="#" className="w-10 h-10 border border-gray-600 rounded-lg hover:bg-blue-600 hover:border-blue-600 transition-colors flex items-center justify-center">
                 <Facebook size={18} />
               </a>
               {/* <a href="#" className="w-10 h-10 border border-gray-600 rounded hover:bg-blue-600 hover:border-blue-600 transition-colors flex items-center justify-center">
                 <Twitter size={18} />
               </a> */}
-              <a href="#" className="w-10 h-10 border border-gray-600 rounded hover:bg-blue-600 hover:border-blue-600 transition-colors flex items-center justify-center">
+              <a href="#" className="w-10 h-10 border border-gray-600 rounded-lg hover:bg-blue-600 hover:border-blue-600 transition-colors flex items-center justify-center">
                 <Youtube size={18} />
               </a>
-              <a href="#" className="w-10 h-10 border border-gray-600 rounded hover:bg-blue-600 hover:border-blue-600 transition-colors flex items-center justify-center">
+              <a href="#" className="w-10 h-10 border border-gray-600 rounded-lg hover:bg-blue-600 hover:border-blue-600 transition-colors flex items-center justify-center">
                 <Instagram size={18} />
               </a>
             </div>
@@ -170,7 +172,7 @@ export default function Footer() {
               </a>
               <a href="tel:+208-6666-0112" className="flex items-center gap-3 text-gray-400 hover:text-white transition-colors">
                 <Phone size={20} className="text-blue-600" />
-                <span>+208-6666-0112</span>
+                <span>+099-9999-9999</span>
               </a>
             </div>
             <div className="space-y-4">
@@ -180,11 +182,11 @@ export default function Footer() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Your email address"
-                  className="w-full bg-white text-gray-900 px-4 py-3 rounded-full pr-12 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  className="w-full bg-white text-gray-900 px-4 py-3 rounded-2xl pr-12 focus:outline-none focus:ring-2 focus:ring-blue-600"
                 />
                 <button
                   onClick={handleSubmit}
-                  className="absolute right-1 top-1 bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors"
+                  className="absolute right-1 top-1 bg-blue-600 text-white w-10 h-10 rounded-2xl flex items-center justify-center hover:bg-blue-700 transition-colors"
                 >
                   <ArrowRight size={20} />
                 </button>

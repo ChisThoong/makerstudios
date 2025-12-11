@@ -21,7 +21,7 @@ export default function Header() {
     { label: "Trang chủ", href: "/" },
     // { label: "Giới thiệu", href: "/gioi-thieu" },
     { label: "Sản phẩm", href: "/san-pham" },
-    { label: "Tuyển dụng", href: "/tuyen-dung" },
+    // { label: "Tuyển dụng", href: "/tuyen-dung" },
     { label: "Tin tức", href: "/tin-tuc" },
     { label: "Liên hệ", href: "/lien-he" },
   ];
@@ -58,7 +58,7 @@ export default function Header() {
             </motion.div>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-8">
+            <nav className="hidden lg:flex items-center gap-16">
               {navItems.map((item, idx) => (
                 <motion.div
                   key={item.href}

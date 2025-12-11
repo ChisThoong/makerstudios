@@ -124,7 +124,7 @@ export default function StatisticsSection() {
   ];
 
   return (
-    <section className="relative py-24 bg-white overflow-hidden bg-cover bg-center bg-no-repeat pb-40"
+    <section className="relative py-24 bg-white overflow-hidden bg-cover bg-center bg-no-repeat "
     style={{
         backgroundImage: "url('/images/service-bg-2.jpg')",
       }}

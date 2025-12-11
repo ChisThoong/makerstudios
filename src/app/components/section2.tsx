@@ -119,7 +119,7 @@ const Section2 = () => {
                 "
             >
                 <img
-                src="https://cdn.pixabay.com/photo/2023/07/19/21/23/ai-generated-8137893_640.jpg"
+                src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600"
                 alt="Main"
                 className="w-full h-full object-cover"
                 />
@@ -140,7 +140,7 @@ const Section2 = () => {
                 "
                 >
                 <img
-                    src="https://ex-coders.com/html/xports/assets/img/home-1/about/about-2.png"
+                    src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600"
                     alt="Side Top"
                     className="w-full h-full object-cover"
                 />
@@ -171,7 +171,7 @@ const Section2 = () => {
           <div className="space-y-6 col-span-6">
             
             <div className="text-5xl sm:text-8xl font-bold text-gray-900 font-bebas text-center sm:text-left">
-                MỘT TẬP THỂ
+                <h2 className= "text-6xl font-gilroy">MỘT TẬP THỂ </h2>
             <div>
                 <TypingWords
                 words={["ĐAM MÊ", "NHIỆT HUYẾT", "ĐỘT PHÁ"]}

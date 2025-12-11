@@ -37,7 +37,7 @@ export default function AnimatedTitleCenter({
       />
 
       {/* TITLE */}
-      <h1 className="text-lg font-semibold text-gray-900 uppercase tracking-tight text-center">
+      <h1 className="text-lg font-base text-gray-900 uppercase tracking-tight text-center">
         {characters.map((char, index) => (
           <motion.span
             key={index}
