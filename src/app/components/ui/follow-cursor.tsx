@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 
 export default function FollowCursor() {
   const mouseRef = useRef({ x: 0, y: 0 });
@@ -8,6 +9,9 @@ export default function FollowCursor() {
   const dot1El = useRef<HTMLDivElement>(null);
   const dot2El = useRef<HTMLDivElement>(null);
   const rafId = useRef<number>(0);
+
+  const pathname = usePathname();
+if (pathname.startsWith("/admin") || pathname.startsWith("/login")) return null;
 
   useEffect(() => {
     function handleMove(e: MouseEvent) {

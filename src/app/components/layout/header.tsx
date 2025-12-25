@@ -3,11 +3,16 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, Menu, X } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 export default function Header() {
   const [langOpen, setLangOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
+
+  if (pathname.startsWith("/admin") || pathname.startsWith("/login")) return null;
+
 
   useEffect(() => {
     const handleScroll = () => {

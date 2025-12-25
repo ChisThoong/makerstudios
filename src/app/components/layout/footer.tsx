@@ -1,10 +1,13 @@
 "use client"
 import React, { useState } from 'react';
 import { Mail, Phone, Facebook, Twitter, Youtube, Instagram, ArrowRight, Calendar } from 'lucide-react';
+import { usePathname } from "next/navigation";
 
 export default function Footer() {
   const [email, setEmail] = useState('');
   const [agreed, setAgreed] = useState(false);
+  const pathname = usePathname();
+  if (pathname.startsWith("/admin") || pathname.startsWith("/login")) return null;
 
   const handleSubmit = () => {
     if (email && agreed) {
@@ -15,16 +18,16 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative bg-black/90 text-white ">
+    <footer className="relative bg-black/90 text-white">
       {/* CTA Banner */}
-        <div className="relative max-w-7xl mx-auto px-4">
+        <div className="relative max-w-7xl mx-auto">
         <div
             className="
             rounded-4xl bg-gradient-to-r from-blue-700 to-blue-600 
             py-12 px-6 md:px-12
             shadow-xl
             relative z-20
-            -translate-y-16 md:-translate-y-30  
+            -translate-y-16 md:-translate-y-20  
             "
         >
             <div className="flex flex-col md:flex-row items-center justify-between gap-6">
@@ -58,7 +61,7 @@ export default function Footer() {
 
       {/* Main Footer Content */}
       <div className="max-w-7xl mx-auto px-4 py-4 scroll-item scroll-up">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12 ">
           {/* Company Info */}
           <div>
           <img 
