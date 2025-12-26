@@ -38,122 +38,101 @@ import {
 } from "@/components/ui/select";
 import { Pencil, Trash2, MoreVertical, Plus, Search, ExternalLink } from "lucide-react";
 
-export default function BlogsPage() {
-  const [posts, setPosts] = useState<any[]>([]);
-  const [filteredPosts, setFilteredPosts] = useState<any[]>([]);
+export default function GamesPage() {
+  const [games, setGames] = useState<any[]>([]);
+  const [filteredGames, setFilteredGames] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [visibilityFilter, setVisibilityFilter] = useState("all");
   const router = useRouter();
 
-  async function fetchPosts() {
+  async function fetchGames() {
     setLoading(true);
-    const res = await fetch("/api/blog");
+    const res = await fetch("/api/game");
     const data = await res.json();
 
     if (data.success) {
-      setPosts(data.posts);
-      setFilteredPosts(data.posts);
+      setGames(data.games);
+      setFilteredGames(data.games);
     }
     setLoading(false);
   }
 
   useEffect(() => {
-    fetchPosts();
+    fetchGames();
   }, []);
 
-  // Filter posts
+  // Filter games
   useEffect(() => {
-    let filtered = [...posts];
+    let filtered = [...games];
 
     // Search filter
     if (searchQuery) {
-      filtered = filtered.filter((post) =>
-        post.title.toLowerCase().includes(searchQuery.toLowerCase())
+      filtered = filtered.filter((game) =>
+        game.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
     // Category filter
     if (categoryFilter !== "all") {
-      filtered = filtered.filter((post) => {
-        if (Array.isArray(post.categories)) {
-          return post.categories.includes(categoryFilter);
+      filtered = filtered.filter((game) => {
+        if (Array.isArray(game.categories)) {
+          return game.categories.includes(categoryFilter);
         }
-        return post.category === categoryFilter;
+        return game.category === categoryFilter;
       });
     }
 
     // Status filter
     if (statusFilter !== "all") {
-      filtered = filtered.filter((post) => post.status === statusFilter);
+      filtered = filtered.filter((game) => game.status === statusFilter);
     }
 
-    // Visibility filter
-    if (visibilityFilter !== "all") {
-      filtered = filtered.filter((post) => post.visibility === visibilityFilter);
-    }
-
-    setFilteredPosts(filtered);
-  }, [searchQuery, categoryFilter, statusFilter, visibilityFilter, posts]);
+    setFilteredGames(filtered);
+  }, [searchQuery, categoryFilter, statusFilter, games]);
 
   async function confirmDelete() {
     if (!deleteId) return;
 
-    const res = await fetch(`/api/blog/${deleteId}`, { method: "DELETE" });
+    const res = await fetch(`/api/game/${deleteId}`, { method: "DELETE" });
     const data = await res.json();
 
     if (data.success) {
-      toast.success("Post deleted successfully");
-      fetchPosts();
+      toast.success("Game deleted successfully");
+      fetchGames();
     } else {
-      toast.error("Failed to delete post");
+      toast.error("Failed to delete game");
     }
     setDeleteId(null);
   }
 
   function getStatusBadge(status: string) {
-    const variants: Record<string, any> = {
-      published: "default",
-      draft: "secondary",
-      archived: "outline",
-    };
-
-    return (
-      <Badge variant={variants[status] || "secondary"}>
-        {status || "draft"}
-      </Badge>
-    );
-  }
-
-  function getVisibilityBadge(visibility: string) {
-    const variants: Record<string, any> = {
-      public: "default",
-      private: "secondary",
-    };
-
     const colors: Record<string, string> = {
-      public: "bg-green-100 text-green-800",
-      private: "bg-gray-100 text-gray-800",
+      active: "bg-green-100 text-green-800",
+      inactive: "bg-gray-100 text-gray-800",
     };
 
     return (
       <span
         className={`px-2 py-1 rounded-full text-xs font-medium ${
-          colors[visibility] || "bg-gray-100 text-gray-800"
+          colors[status] || "bg-gray-100 text-gray-800"
         }`}
       >
-        {visibility || "public"}
+        {status || "active"}
       </span>
     );
   }
 
   function getCategoryBadge(categories: string | string[]) {
     const colors: Record<string, string> = {
-      News: "bg-blue-100 text-blue-800",
-      Event: "bg-pink-100 text-pink-800",
+      Action: "bg-red-100 text-red-800",
+      Adventure: "bg-blue-100 text-blue-800",
+      RPG: "bg-purple-100 text-purple-800",
+      Strategy: "bg-yellow-100 text-yellow-800",
+      Sports: "bg-green-100 text-green-800",
+      Puzzle: "bg-pink-100 text-pink-800",
     };
 
     // Handle array of categories
@@ -186,11 +165,11 @@ export default function BlogsPage() {
     );
   }
 
-  // Get unique categories from posts
+  // Get unique categories from games
   const categories = Array.from(
     new Set(
-      posts.flatMap((p) => 
-        Array.isArray(p.categories) ? p.categories : [p.category]
+      games.flatMap((g) => 
+        Array.isArray(g.categories) ? g.categories : [g.category]
       ).filter(Boolean)
     )
   );
@@ -201,14 +180,14 @@ export default function BlogsPage() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-3xl">Blog Posts</CardTitle>
+              <CardTitle className="text-3xl">Games</CardTitle>
               <CardDescription className="mt-2">
-                Manage your blog posts, categories, and publishing status
+                Manage your game collection, categories, and status
               </CardDescription>
             </div>
-            <Button className="bg-blue-600" onClick={() => router.push("/admin/blogs/new")}>
+            <Button className="bg-blue-600" onClick={() => router.push("/admin/games/new")}>
               <Plus className="w-4 h-4 mr-2" />
-              Create New
+              Add New Game
             </Button>
           </div>
         </CardHeader>
@@ -219,7 +198,7 @@ export default function BlogsPage() {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
               <Input
-                placeholder="Search posts..."
+                placeholder="Search games..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
@@ -246,20 +225,8 @@ export default function BlogsPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="published">Published</SelectItem>
-                <SelectItem value="draft">Draft</SelectItem>
-                <SelectItem value="archived">Archived</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select value={visibilityFilter} onValueChange={setVisibilityFilter}>
-              <SelectTrigger className="w-full md:w-[180px]">
-                <SelectValue placeholder="All Visibility" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Visibility</SelectItem>
-                <SelectItem value="public">Public</SelectItem>
-                <SelectItem value="private">Private</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="inactive">Inactive</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -269,12 +236,12 @@ export default function BlogsPage() {
             <div className="flex items-center justify-center py-12">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
             </div>
-          ) : filteredPosts.length === 0 ? (
+          ) : filteredGames.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-gray-500 text-lg">
-                {searchQuery || categoryFilter !== "all" || statusFilter !== "all" || visibilityFilter !== "all"
-                  ? "No posts found matching your filters"
-                  : "No blog posts yet. Create your first post!"}
+                {searchQuery || categoryFilter !== "all" || statusFilter !== "all"
+                  ? "No games found matching your filters"
+                  : "No games yet. Add your first game!"}
               </p>
             </div>
           ) : (
@@ -283,16 +250,16 @@ export default function BlogsPage() {
                 <thead className="bg-gray-50 border-b">
                   <tr>
                     <th className="text-left p-4 font-semibold text-sm text-gray-700">
-                      Title
+                      Game
                     </th>
                     <th className="text-left p-4 font-semibold text-sm text-gray-700">
                       Category
                     </th>
                     <th className="text-left p-4 font-semibold text-sm text-gray-700">
-                      URL
+                      Status
                     </th>
                     <th className="text-left p-4 font-semibold text-sm text-gray-700">
-                      Visibility
+                      URL
                     </th>
                     <th className="text-left p-4 font-semibold text-sm text-gray-700">
                       Created At
@@ -304,84 +271,107 @@ export default function BlogsPage() {
                 </thead>
 
                 <tbody className="divide-y">
-                  {filteredPosts.map((post) => (
-                    <tr
-                      key={post._id}
-                      className="hover:bg-gray-50 transition-colors"
-                    >
-                      <td className="p-4 max-w-xs">
-                        <div className="font-medium text-gray-900 truncate">
-                          {post.title}
-                        </div>
-                        {post.excerpt && (
-                          <div className="text-sm text-gray-500 mt-1 line-clamp-1">
-                            {post.excerpt}
-                          </div>
-                        )}
-                      </td>
-                      <td className="p-4">
-                        {getCategoryBadge(post.categories || post.category)}
-                      </td>
-                      <td className="p-4">
-                        {post._id && (
-                          <a
-                            href={`/blog/${post._id}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-600 hover:text-blue-800 text-sm flex items-center gap-1"
-                          >
-                            <span className="truncate max-w-[100px]">Visit</span>
-                            <ExternalLink className="w-3 h-3 flex-shrink-0" />
-                          </a>
-                        )}
-                      </td>
-                      <td className="p-4">
-                        {getVisibilityBadge(post.visibility)}
-                      </td>
-                      <td className="p-4 text-gray-600 text-sm">
-                        {new Date(post.createdAt).toLocaleDateString("en-US", {
-                          year: "numeric",
-                          month: "short",
-                          day: "numeric",
-                        })}
-                      </td>
-                      <td className="p-4 text-right">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm">
-                              <MoreVertical className="w-4 h-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                              onClick={() =>
-                                router.push(`/admin/blogs/${post._id}`)
-                              }
-                            >
-                              <Pencil className="w-4 h-4 mr-2" />
-                              Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => setDeleteId(post._id)}
-                              className="text-red-600 focus:text-red-600"
-                            >
-                              <Trash2 className="w-4 h-4 mr-2" />
-                              Delete
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
+  {filteredGames.map((game) => (
+    <tr
+      key={game._id}
+      className="hover:bg-gray-50 transition-colors"
+    >
+      {/* Game */}
+      <td className="p-4">
+        <div className="flex items-center gap-3">
+          {game.logo && (
+            <img
+              src={game.logo}
+              alt={game.name}
+              className="w-10 h-10 rounded object-cover"
+            />
+          )}
+          <div>
+            <div className="font-medium text-gray-900">
+              {game.name}
+            </div>
+            {game.description && (
+              <div className="text-sm text-gray-500 mt-1 line-clamp-1">
+                {game.description}
+              </div>
+            )}
+          </div>
+        </div>
+      </td>
+
+      {/* Category */}
+      <td className="p-4">
+        {getCategoryBadge(game.categories || game.category)}
+      </td>
+
+      {/* Status */}
+      <td className="p-4">
+        {getStatusBadge(game.status)}
+      </td>
+
+      {/* URL */}
+      <td className="p-4">
+        {game.url ? (
+          <a
+            href={game.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:text-blue-800 text-sm inline-flex items-center gap-1"
+          >
+            Visit
+            <ExternalLink className="w-3 h-3" />
+          </a>
+        ) : (
+          <span className="text-gray-400 text-sm">—</span>
+        )}
+      </td>
+
+      {/* Created At */}
+      <td className="p-4 text-gray-600 text-sm">
+        {new Date(game.createdAt).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        })}
+      </td>
+
+      {/* Actions */}
+      <td className="p-4 text-right">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="sm">
+              <MoreVertical className="w-4 h-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem
+              onClick={() => router.push(`/admin/games/${game._id}`)}
+            >
+              <Pencil className="w-4 h-4 mr-2" />
+              Edit
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => setDeleteId(game._id)}
+              className="text-red-600 focus:text-red-600"
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </td>
+    </tr>
+  ))}
+</tbody>
+
               </table>
             </div>
           )}
 
           {/* Summary */}
-          {!loading && filteredPosts.length > 0 && (
+          {!loading && filteredGames.length > 0 && (
             <div className="mt-4 text-sm text-gray-500">
-              Showing {filteredPosts.length} of {posts.length} posts
+              Showing {filteredGames.length} of {games.length} games
             </div>
           )}
         </CardContent>
@@ -394,7 +384,7 @@ export default function BlogsPage() {
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete the
-              blog post and remove it from our servers.
+              game and remove it from our servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

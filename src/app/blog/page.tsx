@@ -52,7 +52,7 @@ export default function BlogPage() {
               "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100",
           },
           commentsCount: post.commentsCount || 0,
-          readTime: "5 phút đọc",
+          readTime: "",
         })) || [];
 
       setPosts(transformedPosts);

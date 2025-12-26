@@ -27,7 +27,7 @@ export default function Header() {
     // { label: "Giới thiệu", href: "/gioi-thieu" },
     { label: "Sản phẩm", href: "/san-pham" },
     // { label: "Tuyển dụng", href: "/tuyen-dung" },
-    { label: "Tin tức", href: "/tin-tuc" },
+    { label: "Tin tức", href: "/blog" },
     { label: "Liên hệ", href: "/lien-he" },
   ];
 

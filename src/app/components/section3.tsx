@@ -4,6 +4,20 @@ import { Users, Trophy, Gamepad2, Star } from 'lucide-react';
 import AnimatedTitleCenter from './ui/animated-title-center';
 import StoreButtons from './ui/store-button';
 
+interface Game {
+  _id: string;
+  name: string;
+  slug: string;
+  url: string;
+  banner: string;
+  logo: string;
+  description: string;
+  status: string;
+  categories: string[];
+  tags: string[];
+  createdAt: string;
+}
+
 export default function StatisticsSection() {
   const [counts, setCounts] = useState({
     staff: 0,
@@ -13,6 +27,8 @@ export default function StatisticsSection() {
   });
 
   const [loaded, setLoaded] = useState(false);
+  const [games, setGames] = useState<Game[]>([]);
+  const [loadingGames, setLoadingGames] = useState(true);
   const itemsRef = useRef<HTMLElement[]>([]);
 
   const targets = {
@@ -21,6 +37,28 @@ export default function StatisticsSection() {
     downloads: 1000000000,
     rating: 4.8
   };
+
+  // Fetch games from API
+  useEffect(() => {
+    const fetchGames = async () => {
+      try {
+        const res = await fetch('/api/game');
+        const data = await res.json();
+        
+        if (data.success && data.games) {
+          // Filter only active games
+          const activeGames = data.games.filter((game: Game) => game.status === 'active');
+          setGames(activeGames);
+        }
+      } catch (error) {
+        console.error('Failed to fetch games:', error);
+      } finally {
+        setLoadingGames(false);
+      }
+    };
+
+    fetchGames();
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -163,8 +201,6 @@ export default function StatisticsSection() {
           </circle>
         </svg>
       </div>
-      {/* Subtle Background */}
-      {/* <div className="absolute inset-0 bg-gradient-to-b from-blue-50/30 to-white"></div> */}
       
       {/* Decorative Elements */}
       <div className="absolute top-20 right-10 w-72 h-72 bg-blue-500/5 rounded-full blur-3xl"></div>
@@ -201,11 +237,10 @@ export default function StatisticsSection() {
             className="scroll-item scroll-up inline-flex items-center gap-3 mb-6"
           >
             <div className="flex justify-center">
-                            <AnimatedTitleCenter className="my-6">
-                                SẢN PHẨM
-                            </AnimatedTitleCenter>
-                        </div>
-           
+              <AnimatedTitleCenter className="my-6">
+                SẢN PHẨM
+              </AnimatedTitleCenter>
+            </div>
           </div>
           <h2 
             ref={addToRefs}
@@ -214,59 +249,72 @@ export default function StatisticsSection() {
             GAME 
             <span className="text-blue-600"> NỔI BẬT</span>
           </h2>
-          
         </div>
 
-        {/* Games Grid - Featured Products */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-20">
-          {/* Game 1 */}
-          <div 
-            ref={addToRefs}
-            className="scroll-item scroll-left group relative"
-            >
-            <div className="relative bg-white rounded-2xl overflow-hidden border-2 border-gray-100 hover:border-blue-200 transition-all duration-500 hover:shadow-xl hover:shadow-blue-100/50">
-                
-                {/* Game Thumbnail */}
-                <div className="aspect-[4/3] bg-gradient-to-br from-blue-500 to-blue-600 relative overflow-hidden">
-                
-                <img 
-                    src="/images/bg-natv.png" 
-                    alt="Game 1"
-                    className="w-full h-full object-cover opacity-90 group-hover:scale-110 transition-transform duration-700"
-                />
+        {/* Games Grid - Dynamic from API */}
+        {loadingGames ? (
+          <div className="flex items-center justify-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          </div>
+        ) : games.length === 0 ? (
+          <div className="text-center py-20">
+            <p className="text-gray-500 text-lg">Chưa có game nào được thêm</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-20 ">
+            {games.map((game, index) => {
+              const animationClass = index % 2 === 0 ? 'scroll-left' : 'scroll-right';
+              
+              return (
+                <div 
+                  key={game._id}
+                  ref={addToRefs}
+                  className={`  group relative`}
+                >
+                  <div className="relative bg-white rounded-2xl overflow-hidden border-2 border-gray-100 hover:border-blue-200 transition-all duration-500 hover:shadow-xl hover:shadow-blue-100/50">
+                    
+                    {/* Game Thumbnail */}
+                    <div className="aspect-[4/3] bg-gradient-to-br from-blue-500 to-blue-600 relative overflow-hidden">
+                    
+                      <img 
+                        src={game.banner || '/images/default-game-banner.jpg'} 
+                        alt={game.name}
+                        className="w-full h-full object-cover opacity-90 group-hover:scale-110 transition-transform duration-700"
+                      />
 
-                {/* Dark overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-                
-                {/*  GAME INFO OVERLAY — CORRECT POSITION */}
-                <div className="absolute bottom-0 left-0 right-0 px-4 py-3 z-20">
+                      {/* Dark overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+                      
+                      {/* GAME INFO OVERLAY */}
+                      <div className="absolute bottom-0 left-0 right-0 px-4 py-3 z-20">
+                        <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-3">
+                          {/* Game Icon */}
+                          {game.logo && (
+                            <img
+                              src={game.logo}
+                              alt={game.name}
+                              className="w-16 h-16 sm:w-20 sm:h-20 md:w-14 md:h-14 rounded-xl shadow-lg flex-shrink-0 p-0 m-0"
+                            />
+                          )}
 
-                    <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-3 ">
-                    {/* Game Icon */}
-                    <img
-                        src="/images/icon_game.png"
-                        alt="Night at the Valley"
-                        className="w-16 h-16 sm:w-20 sm:h-20 md:w-14 md:h-14 rounded-xl shadow-lg flex-shrink-0 p-0 m-0"
-                    />
+                          {/* Title + Buttons */}
+                          <div className="flex flex-col items-center sm:items-start">
+                            <h1 
+                              className="text-xl sm:text-2xl md:text-lg font-black text-white leading-tight text-center sm:text-left"
+                              style={{
+                                textShadow:
+                                  '2px 2px 4px rgba(0,0,0,0.8), -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000'
+                              }}
+                            >
+                              {game.name.toUpperCase()}
+                            </h1>
 
-                    {/* Title + Buttons */}
-                    <div className="flex flex-col items-center sm:items-start ">
-
-                        <h1 
-                        className="text-xl sm:text-2xl md:tex-lg font-black text-white leading-tight text-center sm:text-left"
-                        style={{
-                            textShadow:
-                            '2px 2px 4px rgba(0,0,0,0.8), -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000'
-                        }}
-                        >
-                        NIGHT AT THE VALLEY
-                        </h1>
-
-                        {/* Store Buttons */}
-                        <a
-                            href="https://vn.nightvalley.gg"
-                            target="_blank"
-                            className="
+                            {/* Store Button */}
+                            <a
+                              href={game.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="
                                 inline-flex items-center gap-2 
                                 bg-blue-600/90 backdrop-blur 
                                 text-white font-semibold 
@@ -274,93 +322,21 @@ export default function StatisticsSection() {
                                 px-3 py-1 rounded-xl 
                                 shadow-md  
                                 hover:bg-blue-700 transition-all duration-300
-                            "
+                              "
                             >
-                            <span>Truy cập</span>
-                        </a>
-
+                              <span>Truy cập</span>
+                            </a>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    </div>
+                  </div>
                 </div>
-
-                </div>
-
-            </div>
-            </div>
-
-
-          {/* Game 2 */}
-          <div 
-            ref={addToRefs}
-            className="scroll-item scroll-up group relative"
-            >
-            <div className="relative bg-white rounded-2xl overflow-hidden border-2 border-gray-100 hover:border-blue-200 transition-all duration-500 hover:shadow-xl hover:shadow-blue-100/50">
-                
-                {/* Game Thumbnail */}
-                <div className="aspect-[4/3] bg-gradient-to-br from-blue-500 to-blue-600 relative overflow-hidden">
-                
-                <img 
-                    src="/images/bg-woe.png" 
-                    alt="Game 1"
-                    className="w-full h-full object-cover opacity-90 group-hover:scale-110 transition-transform duration-700"
-                />
-
-                {/* Dark overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-                
-                {/*  GAME INFO OVERLAY — CORRECT POSITION */}
-                <div className="absolute bottom-0 left-0 right-0 px-4 py-3 z-20">
-
-                    <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-3 ">
-                    {/* Game Icon */}
-                    <img
-                        src="/images/icon_game2.png"
-                        alt="Night at the Valley"
-                        className="w-16 h-16 sm:w-20 sm:h-20 md:w-14 md:h-14 rounded-xl shadow-lg flex-shrink-0 p-0 m-0"
-                    />
-
-                    {/* Title + Buttons */}
-                    <div className="flex flex-col items-center sm:items-start ">
-
-                        <h1 
-                        className="text-xl sm:text-2xl md:tex-lg font-black text-white leading-tight text-center sm:text-left"
-                        style={{
-                            textShadow:
-                            '2px 2px 4px rgba(0,0,0,0.8), -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000'
-                        }}
-                        >
-                        WINGS OF EVERLAND
-                        </h1>
-                   
-                        <a
-                            href="https://woe2.wingsofeverland.com/"
-                            target="_blank"
-                            className="
-                                inline-flex items-center gap-2 
-                                bg-blue-600/90 backdrop-blur 
-                                text-white font-semibold 
-                                text-sm
-                                px-3 py-1 rounded-xl 
-                                shadow-md  
-                                hover:bg-blue-700 transition-all duration-300
-                            "
-                            >
-                            <span>Truy cập</span>
-                        </a>
-
-
-                    </div>
-                    </div>
-                </div>
-
-                </div>
-
-            </div>
-        </div>
-  
-        </div>
+              );
+            })}
+          </div>
+        )}
       </div>
-
     </section>
   );
 }
