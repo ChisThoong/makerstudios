@@ -4,15 +4,16 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { useLanguage } from "../../context/language-context";
 
 export default function Header() {
   const [langOpen, setLangOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+  const { language, setLanguage, t } = useLanguage();
 
   if (pathname.startsWith("/admin") || pathname.startsWith("/login")) return null;
-
 
   useEffect(() => {
     const handleScroll = () => {
@@ -23,13 +24,21 @@ export default function Header() {
   }, []);
 
   const navItems = [
-    { label: "Trang chủ", href: "/" },
-    // { label: "Giới thiệu", href: "/gioi-thieu" },
-    { label: "Sản phẩm", href: "/san-pham" },
-    // { label: "Tuyển dụng", href: "/tuyen-dung" },
-    { label: "Tin tức", href: "/blog" },
-    { label: "Liên hệ", href: "/lien-he" },
+    { label: t('nav.home'), href: "/" },
+    { label: t('nav.products'), href: "/san-pham" },
+    { label: t('nav.news'), href: "/blog" },
+    { label: t('nav.contact'), href: "/lien-he" },
   ];
+
+  const languages = [
+    { code: 'vi' as const, label: t('lang.vietnamese'), display: 'VN' },
+    { code: 'en' as const, label: t('lang.english'), display: 'EN' },
+  ];
+
+  const handleLanguageChange = (langCode: 'vi' | 'en') => {
+    setLanguage(langCode);
+    setLangOpen(false);
+  };
 
   return (
     <>
@@ -92,7 +101,7 @@ export default function Header() {
                   onClick={() => setLangOpen(!langOpen)}
                   className="flex items-center gap-2 px-4 py-2 text-gray-700 font-medium rounded-lg border border-gray-300 hover:border-blue-500 hover:text-blue-600 transition-all duration-200"
                 >
-                  <span className="text-sm">EN/VN</span>
+                  <span className="text-sm">{language === 'vi' ? 'VN' : 'EN'}</span>
                   <ChevronDown
                     className={`w-4 h-4 transition-transform duration-200 ${
                       langOpen ? "rotate-180" : ""
@@ -117,14 +126,13 @@ export default function Header() {
                         transition={{ duration: 0.2 }}
                         className="absolute right-0 mt-2 w-36 bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden z-20"
                       >
-                        {[
-                          { code: "VN", label: "Tiếng Việt" },
-                          { code: "EN", label: "English" },
-                        ].map((lang) => (
+                        {languages.map((lang) => (
                           <button
                             key={lang.code}
-                            onClick={() => setLangOpen(false)}
-                            className="block w-full text-left px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-150 text-sm font-medium"
+                            onClick={() => handleLanguageChange(lang.code)}
+                            className={`block w-full text-left px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-150 text-sm font-medium ${
+                              language === lang.code ? 'bg-blue-50 text-blue-600' : ''
+                            }`}
                           >
                             {lang.label}
                           </button>
@@ -208,15 +216,17 @@ export default function Header() {
 
                 {/* Mobile language selector */}
                 <div className="p-4 border-t border-gray-200">
-                  <div className="text-xs text-gray-500 mb-2">Ngôn ngữ</div>
+                  <div className="text-xs text-gray-500 mb-2">{t('lang.label')}</div>
                   <div className="grid grid-cols-2 gap-2">
-                    {[
-                      { code: "VN", label: "Tiếng Việt" },
-                      { code: "EN", label: "English" },
-                    ].map((lang) => (
+                    {languages.map((lang) => (
                       <button
                         key={lang.code}
-                        className="px-4 py-3 text-sm font-medium text-gray-700 hover:text-blue-600 bg-gray-50 hover:bg-blue-50 rounded-lg transition-colors duration-200"
+                        onClick={() => handleLanguageChange(lang.code)}
+                        className={`px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200 ${
+                          language === lang.code
+                            ? 'text-blue-600 bg-blue-50'
+                            : 'text-gray-700 hover:text-blue-600 bg-gray-50 hover:bg-blue-50'
+                        }`}
                       >
                         {lang.label}
                       </button>

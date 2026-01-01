@@ -1,9 +1,11 @@
 "use client"
 import React, { useState } from 'react';
 import { Search } from 'lucide-react';
+import { useLanguage } from '../../context/language-context';
 
 export default function SearchBox() {
   const [searchQuery, setSearchQuery] = useState('');
+  const { t } = useLanguage();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -13,11 +15,11 @@ export default function SearchBox() {
 
   return (
     <div className="bg-white rounded-xl shadow-lg p-6">
-      <h3 className="text-xl font-bold text-gray-900 mb-4">Search</h3>
+      <h3 className="text-xl font-bold text-gray-900 mb-4">{t('blogPage.search')}</h3>
       <form onSubmit={handleSearch} className="relative">
         <input
           type="text"
-          placeholder="Search....."
+          placeholder={t('blogPage.searchPlaceholder')}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"

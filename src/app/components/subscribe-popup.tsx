@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { CheckCircle, XCircle, Loader2 } from "lucide-react";
+import { useLanguage } from "../context/language-context";
 
 export default function SubscribeModal({ isOpen, status, message, onClose }: any) {
   const [countdown, setCountdown] = useState(3);
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (status === "success" || status === "error") {
@@ -63,8 +65,8 @@ export default function SubscribeModal({ isOpen, status, message, onClose }: any
               <Loader2 className="relative h-16 w-16 text-blue-600 animate-spin" strokeWidth={2.5} />
             </div>
             <div className="space-y-2">
-              <p className="text-gray-900 text-xl font-semibold">Đang xử lý</p>
-              <p className="text-gray-500 text-sm">Vui lòng đợi trong giây lát...</p>
+              <p className="text-gray-900 text-xl font-semibold">{t('modal.processing')}</p>
+              <p className="text-gray-500 text-sm">{t('modal.pleaseWait')}</p>
             </div>
           </div>
         )}
@@ -79,14 +81,16 @@ export default function SubscribeModal({ isOpen, status, message, onClose }: any
               </div>
             </div>
             <div className="space-y-3">
-              <h3 className="text-gray-900 text-2xl font-bold">Tuyệt vời</h3>
+              <h3 className="text-gray-900 text-2xl font-bold">{t('modal.awesome')}</h3>
               <p className="text-gray-600 text-base leading-relaxed">{message}</p>
               <div className="flex items-center justify-center gap-2 pt-2">
                 <div className="h-2.5 w-2.5 bg-green-500 rounded-full animate-bounce shadow-lg shadow-green-500/50"></div>
                 <div className="h-2.5 w-2.5 bg-green-500 rounded-full animate-bounce shadow-lg shadow-green-500/50" style={{ animationDelay: '0.15s' }}></div>
                 <div className="h-2.5 w-2.5 bg-green-500 rounded-full animate-bounce shadow-lg shadow-green-500/50" style={{ animationDelay: '0.3s' }}></div>
               </div>
-              <p className="text-gray-400 text-xs">Tự động đóng sau {countdown} giây</p>
+              <p className="text-gray-400 text-xs">
+                {t('modal.autoClose').replace('{count}', countdown.toString())}
+              </p>
             </div>
           </div>
         )}
@@ -101,14 +105,16 @@ export default function SubscribeModal({ isOpen, status, message, onClose }: any
               </div>
             </div>
             <div className="space-y-3">
-              <h3 className="text-gray-900 text-2xl font-bold">Có lỗi xảy ra</h3>
+              <h3 className="text-gray-900 text-2xl font-bold">{t('modal.error')}</h3>
               <p className="text-gray-600 text-base leading-relaxed">{message}</p>
               <div className="flex items-center justify-center gap-2 pt-2">
                 <div className="h-2.5 w-2.5 bg-red-500 rounded-full animate-bounce shadow-lg shadow-red-500/50"></div>
                 <div className="h-2.5 w-2.5 bg-red-500 rounded-full animate-bounce shadow-lg shadow-red-500/50" style={{ animationDelay: '0.15s' }}></div>
                 <div className="h-2.5 w-2.5 bg-red-500 rounded-full animate-bounce shadow-lg shadow-red-500/50" style={{ animationDelay: '0.3s' }}></div>
               </div>
-              <p className="text-gray-400 text-xs">Tự động đóng sau {countdown} giây</p>
+              <p className="text-gray-400 text-xs">
+                {t('modal.autoClose').replace('{count}', countdown.toString())}
+              </p>
             </div>
           </div>
         )}

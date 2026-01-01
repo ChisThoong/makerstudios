@@ -4,6 +4,7 @@ import { ArrowRight, User, MessageCircle } from 'lucide-react';
 import AnimatedTitle from './ui/animated-title';
 import AnimatedSplitText from './ui/animated-split-text';
 import { useRouter } from 'next/navigation';
+import { useLanguage } from '../context/language-context';
 
 // Type definitions
 interface Author {
@@ -64,6 +65,7 @@ const bgColors = [
 
 export default function Section4() {
   const router = useRouter();
+  const { t, language } = useLanguage();
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -92,8 +94,8 @@ export default function Section4() {
       const transformedPosts: BlogPost[] = publishedPosts.slice(0, 6).map((post: ApiPost, index: number) => ({
         id: post._id,
         image: post.featuredImage || 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=600&h=400&fit=crop',
-        category: post.categories?.[0] || 'Uncategorized',
-        date: new Date(post.publishDate).toLocaleDateString('en-US', { 
+        category: post.categories?.[0] || t('blog.uncategorized'),
+        date: new Date(post.publishDate).toLocaleDateString(language === 'vi' ? 'vi-VN' : 'en-US', { 
           month: 'long', 
           day: 'numeric', 
           year: 'numeric' 
@@ -136,11 +138,11 @@ export default function Section4() {
           <div className="w-full md:w-auto">
             <div className="flex items-center justify-center sm:justify-start w-full mb-4">
               <AnimatedTitle>
-                TIN TỨC & SỰ KIỆN
+                {t('blog.subtitle')}
               </AnimatedTitle>
             </div>
             <AnimatedSplitText 
-                text="Cập nhật mới nhất"
+                text={t('blog.title')}
                 className="text-4xl sm:text-5xl font-bold text-gray-900 text-center sm:text-left"
             />
           </div>
@@ -151,7 +153,7 @@ export default function Section4() {
               onClick={handleViewAll}
               className="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 text-white font-semibold rounded-full hover:bg-blue-700 transition-all hover:gap-3 group"
             >
-              Xem tất cả
+              {t('blog.viewAll')}
               <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
@@ -161,20 +163,20 @@ export default function Section4() {
         {loading && (
           <div className="flex justify-center items-center py-20">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-            <p className="ml-4 text-gray-600">Đang tải bài viết...</p>
+            <p className="ml-4 text-gray-600">{t('blog.loading')}</p>
           </div>
         )}
 
         {/* Error State */}
         {error && !loading && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-            <p className="text-red-600 font-medium mb-2">Không thể tải bài viết</p>
+            <p className="text-red-600 font-medium mb-2">{t('blog.error')}</p>
             <p className="text-sm text-gray-600">{error}</p>
             <button 
               onClick={fetchBlogPosts}
               className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
             >
-              Thử lại
+              {t('blog.retry')}
             </button>
           </div>
         )}
@@ -182,7 +184,7 @@ export default function Section4() {
         {/* Empty State */}
         {!loading && !error && blogPosts.length === 0 && (
           <div className="bg-gray-100 border border-gray-200 rounded-lg p-12 text-center">
-            <p className="text-gray-600 text-lg">Chưa có bài viết nào</p>
+            <p className="text-gray-600 text-lg">{t('blog.noPosts')}</p>
           </div>
         )}
 
@@ -214,7 +216,7 @@ export default function Section4() {
                       {post.category}
                     </span>
                     <span className="text-gray-400 text-xs font-medium">
-                      {new Date(post.date).toLocaleDateString("vi-VN", {
+                      {new Date(post.date).toLocaleDateString(language === 'vi' ? 'vi-VN' : 'en-US', {
                         day: "2-digit",
                         month: "2-digit",
                         year: "numeric",
@@ -247,13 +249,8 @@ export default function Section4() {
                   <div className="flex items-center justify-between text-sm text-gray-600">
                     <div className="flex items-center gap-2">
                       <User size={16} />
-                      <span>By {post.author.name}</span>
+                      <span>{t('blog.by')} {post.author.name}</span>
                     </div>
-
-                    {/* <div className="flex items-center gap-2">
-                      <MessageCircle size={16} />
-                      <span>{post.commentsCount}</span>
-                    </div> */}
                   </div>
                 </div>
               </div>
@@ -267,7 +264,7 @@ export default function Section4() {
             onClick={handleViewAll}
             className="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 text-white font-semibold rounded-full hover:bg-blue-700 transition-all hover:gap-3 group"
           >
-            Xem tất cả
+            {t('blog.viewAll')}
             <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
           </button>
         </div>

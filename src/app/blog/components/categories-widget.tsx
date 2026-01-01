@@ -1,14 +1,17 @@
 "use client"
 import React from 'react';
+import { useLanguage } from '../../context/language-context';
 
 interface CategoriesWidgetProps {
   categories: string[];
 }
 
 export default function CategoriesWidget({ categories }: CategoriesWidgetProps) {
+  const { t } = useLanguage();
+
   return (
     <div className="bg-white rounded-xl shadow-lg p-6">
-      <h3 className="text-xl font-bold text-gray-900 mb-4">Categories</h3>
+      <h3 className="text-xl font-bold text-gray-900 mb-4">{t('blogPage.categories')}</h3>
       <div className="flex flex-wrap gap-2">
         {categories.map((category, index) => (
           <button

@@ -2,15 +2,18 @@
 import React from 'react';
 import { Calendar } from 'lucide-react';
 import { RecentPost } from '../types/blog';
+import { useLanguage } from '../../context/language-context';
 
 interface RecentPostsProps {
   posts: RecentPost[];
 }
 
 export default function RecentPosts({ posts }: RecentPostsProps) {
+  const { t } = useLanguage();
+
   return (
     <div className="bg-white rounded-xl shadow-lg p-6">
-      <h3 className="text-xl font-bold text-gray-900 mb-6">Recent Post</h3>
+      <h3 className="text-xl font-bold text-gray-900 mb-6">{t('blogPage.recentPosts')}</h3>
       <div className="space-y-4">
         {posts.map((post) => (
           <a 

@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Users, Trophy, Gamepad2, Star } from 'lucide-react';
 import AnimatedTitleCenter from './ui/animated-title-center';
-import StoreButtons from './ui/store-button';
+import { useLanguage } from '../context/language-context';
 
 interface Game {
   _id: string;
@@ -19,6 +19,7 @@ interface Game {
 }
 
 export default function StatisticsSection() {
+  const { t } = useLanguage();
   const [counts, setCounts] = useState({
     staff: 0,
     games: 0,
@@ -138,25 +139,25 @@ export default function StatisticsSection() {
     {
       icon: Users,
       value: Math.floor(counts.staff),
-      label: 'Nhân sự',
+      label: t('stats.staff'),
       suffix: '+'
     },
     {
       icon: Gamepad2,
       value: Math.floor(counts.games),
-      label: 'Sản phẩm',
+      label: t('stats.games'),
       suffix: '+'
     },
     {
       icon: Trophy,
       value: formatDownloads(counts.downloads),
-      label: 'Lượt tải',
+      label: t('stats.downloads'),
       suffix: '+'
     },
     {
       icon: Star,
       value: counts.rating.toFixed(1),
-      label: 'Đánh giá',
+      label: t('stats.rating'),
       suffix: '/5'
     }
   ];
@@ -238,7 +239,7 @@ export default function StatisticsSection() {
           >
             <div className="flex justify-center">
               <AnimatedTitleCenter className="my-6">
-                SẢN PHẨM
+                {t('stats.title')}
               </AnimatedTitleCenter>
             </div>
           </div>
@@ -246,8 +247,8 @@ export default function StatisticsSection() {
             ref={addToRefs}
             className="scroll-item scroll-up text-5xl sm:text-8xl font-bold text-gray-900 font-bebas text-center"
           >
-            GAME 
-            <span className="text-blue-600"> NỔI BẬT</span>
+            {t('stats.heading')}
+            <span className="text-blue-600"> {t('stats.headingHighlight')}</span>
           </h2>
         </div>
 
@@ -258,7 +259,7 @@ export default function StatisticsSection() {
           </div>
         ) : games.length === 0 ? (
           <div className="text-center py-20">
-            <p className="text-gray-500 text-lg">Chưa có game nào được thêm</p>
+            <p className="text-gray-500 text-lg">{t('stats.noGames')}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-20 ">
@@ -269,7 +270,7 @@ export default function StatisticsSection() {
                 <div 
                   key={game._id}
                   ref={addToRefs}
-                  className={`  group relative`}
+                  className={`group relative`}
                 >
                   <div className="relative bg-white rounded-2xl overflow-hidden border-2 border-gray-100 hover:border-blue-200 transition-all duration-500 hover:shadow-xl hover:shadow-blue-100/50">
                     
@@ -324,7 +325,7 @@ export default function StatisticsSection() {
                                 hover:bg-blue-700 transition-all duration-300
                               "
                             >
-                              <span>Truy cập</span>
+                              <span>{t('stats.access')}</span>
                             </a>
                           </div>
                         </div>

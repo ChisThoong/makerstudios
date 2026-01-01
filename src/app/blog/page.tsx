@@ -5,9 +5,10 @@ import { useRouter } from "next/navigation";
 import { BlogPost, RecentPost, ApiResponse, ApiPost } from "./types/blog";
 import BlogPostCard from "./components/blog-post-card";
 import BlogSidebar from "./components/blog-sidebar";
-
+import { useLanguage } from "../context/language-context";
 export default function BlogPage() {
   const router = useRouter();
+  const { t, language } = useLanguage();
 
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
@@ -15,7 +16,7 @@ export default function BlogPage() {
 
   useEffect(() => {
     fetchBlogPosts();
-  }, []);
+  }, [language]); // Re-fetch when language changes for date formatting
 
   const fetchBlogPosts = async () => {
     try {
@@ -35,12 +36,15 @@ export default function BlogPage() {
           image:
             post.featuredImage ||
             "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=800",
-          category: post.categories?.[0] || "Uncategorized",
-          date: new Date(post.publishDate).toLocaleDateString("vi-VN", {
-            day: "numeric",
-            month: "long",
-            year: "numeric",
-          }),
+          category: post.categories?.[0] || t('blog.uncategorized'),
+          date: new Date(post.publishDate).toLocaleDateString(
+            language === 'vi' ? 'vi-VN' : 'en-US',
+            {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            }
+          ),
           title: post.title,
           excerpt: post.excerpt,
           content: post.content,
@@ -77,11 +81,11 @@ export default function BlogPage() {
   return (
     <div className="min-h-screen bg-gray-50 pt-20 pb-40">
       <div className="max-w-7xl mx-auto px-6 py-12">
-        <h1 className="text-5xl font-bold mb-12">Tin tức & Sự kiện</h1>
+        <h1 className="text-5xl font-bold mb-12">{t('blogPage.title')}</h1>
 
         {loading && (
           <div className="flex justify-center py-20">
-            <p>Đang tải bài viết...</p>
+            <p>{t('blogPage.loading')}</p>
           </div>
         )}
 

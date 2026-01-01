@@ -6,11 +6,13 @@ import AnimatedSplitText from './ui/animated-split-text';
 import TypingWords from './ui/typing-words';
 import AnimatedTitleCenter from './ui/animated-title-center';
 import GameCard from './game-card';
+import { useLanguage } from '../context/language-context';
 
 const Section2 = () => {
   const [loaded, setLoaded] = useState(false);
   const sectionRef = useRef(null);
   const itemsRef = useRef<HTMLElement[]>([]);
+  const { t, language } = useLanguage();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -48,6 +50,14 @@ const Section2 = () => {
       itemsRef.current.push(el);
     }
   };
+
+  // Dynamic words based on language
+  const typingWords = [
+    t('about.word1'),
+    t('about.word2'),
+    t('about.word3')
+  ];
+
   return (
     <section 
       ref={sectionRef}
@@ -56,7 +66,6 @@ const Section2 = () => {
         backgroundImage: "url('/images/world-map.png')",
       }}
     >
-      {/* <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#e5e9f3] to-white h-50" /> */}
       {/* Decorative Background Elements with Animation */}
       <div className="absolute top-10 right-10 w-64 h-64 bg-blue-100 rounded-full blur-3xl opacity-30 animate-pulse"></div>
       <div className="absolute bottom-10 left-10 w-96 h-96 bg-purple-100 rounded-full blur-3xl opacity-20 animate-pulse" style={{ animationDelay: '1s' }}></div>
@@ -88,20 +97,18 @@ const Section2 = () => {
         </div>
       )}
 
-
-
       <div className="container mx-auto px-6 sm:px-8 max-w-7xl relative z-10">
         <div 
-              ref={addToRefs}
-              className="scroll-item scroll-up text-center flex items-center gap-4 text-blue-600 font-semibold text-sm sm:text-base"
-            >
-             
-            </div>
-            <div className="flex justify-center">
-                <AnimatedTitleCenter className="my-6">
-                    VỀ CHÚNG TÔI
-                </AnimatedTitleCenter>
-            </div>
+          ref={addToRefs}
+          className="scroll-item scroll-up text-center flex items-center gap-4 text-blue-600 font-semibold text-sm sm:text-base"
+        >
+        </div>
+        
+        <div className="flex justify-center">
+          <AnimatedTitleCenter className="my-6">
+            {t('about.title')}
+          </AnimatedTitleCenter>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
@@ -109,96 +116,83 @@ const Section2 = () => {
           <div className="relative col-span-6 flex gap-4 h-full">
             {/* LEFT IMAGE */}
             <div
-                ref={addToRefs}
-                className="
+              ref={addToRefs}
+              className="
                 scroll-item scroll-left 
                 relative rounded-3xl overflow-hidden 
                 shadow-2xl border-4 border-white 
                 flex-1 
                 transform hover:scale-[1.02] transition-all duration-500
-                "
+              "
             >
-                <img
+              <img
                 src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600"
                 alt="Main"
                 className="w-full h-full object-cover"
-                />
+              />
             </div>
 
             {/* RIGHT COLUMN */}
             <div className="flex-1 flex flex-col gap-4">
-
-                {/* TOP SMALL IMAGE */}
-                <div
+              {/* TOP SMALL IMAGE */}
+              <div
                 ref={addToRefs}
                 className="
-                    scroll-item scroll-down 
-                    relative rounded-3xl overflow-hidden 
-                    shadow-2xl border-4 border-white 
-                    flex-1 
-                    transform hover:scale-[1.02] transition-all duration-500
+                  scroll-item scroll-down 
+                  relative rounded-3xl overflow-hidden 
+                  shadow-2xl border-4 border-white 
+                  flex-1 
+                  transform hover:scale-[1.02] transition-all duration-500
                 "
-                >
+              >
                 <img
-                    src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600"
-                    alt="Side Top"
-                    className="w-full h-full object-cover"
+                  src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600"
+                  alt="Side Top"
+                  className="w-full h-full object-cover"
                 />
-                </div>
+              </div>
 
-                {/* BOTTOM SMALL IMAGE */}
-                <div
+              {/* BOTTOM SMALL IMAGE */}
+              <div
                 ref={addToRefs}
                 className="
-                    scroll-item scroll-up 
-                    relative rounded-3xl overflow-hidden 
-                    shadow-2xl border-4 border-white 
-                    flex-1
-                    transform hover:scale-[1.02] transition-all duration-500
+                  scroll-item scroll-up 
+                  relative rounded-3xl overflow-hidden 
+                  shadow-2xl border-4 border-white 
+                  flex-1
+                  transform hover:scale-[1.02] transition-all duration-500
                 "
-                >
+              >
                 <img
-                    src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600"
-                    alt="Side Bottom"
-                    className="w-full h-full object-cover"
+                  src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600"
+                  alt="Side Bottom"
+                  className="w-full h-full object-cover"
                 />
-                </div>
-
+              </div>
             </div>
-            </div>
+          </div>
 
           {/* Right Content - Text */}
           <div className="space-y-6 col-span-6">
-            
             <div className="text-5xl sm:text-8xl font-bold text-gray-900 font-bebas text-center sm:text-left">
-                <h2 className= "text-6xl font-gilroy mb-3">MỘT TẬP THỂ </h2>
-            <div>
+              <h2 className="text-6xl font-gilroy mb-3">{t('about.teamLabel')}</h2>
+              <div>
                 <TypingWords
-                words={["ĐAM MÊ", "NHIỆT HUYẾT", "ĐỘT PHÁ"]}
-                className="text-blue-600"
+                  key={language} // Re-render when language changes
+                  words={typingWords}
+                  className="text-blue-600"
                 />
+              </div>
             </div>
-            </div>
-
-            {/* <p 
-              ref={addToRefs}
-              className="scroll-item scroll-up text-lg text-gray-700 leading-relaxed"
-            >
-              Maker Studios chuyên phát triển các tựa game 2D với phong cách đồ họa đẹp mắt và lối chơi lôi cuốn.
-              Chúng tôi tin rằng sức mạnh của nghệ thuật 2D và thiết kế chỉn chu có thể mang đến những trải nghiệm giải trí đáng nhớ cho mọi người chơi.
-            </p> */}
 
             <p 
               ref={addToRefs}
               className="scroll-item scroll-up text-lg text-gray-700 leading-relaxed"
             >
-              Chúng tôi chú trọng xây dựng từng yếu tố cốt lõi : gameplay cuốn hút, 
-              đồ họa đẹp mắt, thiết kế chỉn chu và âm thanh sống động. Tất cả được kết hợp hài hòa để mang đến trải nghiệm trọn 
-              vẹn và cảm xúc nhất cho người chơi.
+              {t('about.description')}
             </p>
 
             <GameCard/>
-            
           </div>
         </div>
       </div>
