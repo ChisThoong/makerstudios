@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import BlogEditor from "@/src/app/components/admin/blog-editor";
+import { toast } from "sonner";
+
 import {
   Calendar,
   Tag,
@@ -126,10 +128,15 @@ export default function EditBlogPage() {
     setSaving(false);
 
     if (res.ok) {
-      alert(`Bài viết đã được ${saveStatus === "draft" ? "lưu nháp" : "cập nhật"} thành công!`);
+      toast.success(
+        saveStatus === "draft"
+          ? "Draft saved successfully"
+          : "Post updated successfully"
+      );
+    
       router.push("/admin/blogs");
     } else {
-      alert(data.error || "Lỗi khi cập nhật bài viết");
+      toast.error(data.error || "Failed to update post");
     }
   };
 

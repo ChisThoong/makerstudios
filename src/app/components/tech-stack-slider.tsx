@@ -45,7 +45,7 @@ export default function TechStackSlider() {
   }
 
   return (
-    <div className="relative py-24 container mx-auto overflow-hidden bg-cover bg-center bg-no-repeat">
+    <div className="relative py-24 container max-w-7xl px-6 mx-auto overflow-hidden bg-cover bg-center bg-no-repeat">
       {/* First Row - Left to Right */}
       <div className="mb-8 overflow-hidden">
         <div className="flex animate-scroll-left gap-6">
