@@ -6,6 +6,7 @@ import AnimatedSplitText from './ui/animated-split-text';
 import TypingWords from './ui/typing-words';
 import AnimatedTitleCenter from './ui/animated-title-center';
 import GameCard from './game-card';
+import TechStackSlider from './tech-stack-slider';
 import { useLanguage } from '../context/language-context';
 
 const Section2 = () => {
@@ -232,7 +233,9 @@ const Section2 = () => {
           </circle>
         </svg>
       </div>
+     
     </section>
+    
   );
 };
 

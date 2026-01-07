@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import { LayoutGrid, Newspaper, Gamepad2, LogOut } from "lucide-react";
+import { LayoutGrid, Newspaper, Gamepad2, LogOut, Layers } from "lucide-react";
 
 async function logout() {
     await fetch("/api/logout", { method: "POST" });
@@ -22,6 +22,11 @@ export default function AdminSidebar() {
       label: "Games",
       href: "/admin/games",
       icon: <Gamepad2 className="w-5 h-5" />,
+    },
+    {
+      label: "Technology stack",
+      href: "/admin/technology-stack",
+      icon: <Layers className="w-5 h-5" />,
     },
   ];
 
