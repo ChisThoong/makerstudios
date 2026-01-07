@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Mail, Phone, Facebook, Twitter, Youtube, Instagram, ArrowRight, Calendar } from 'lucide-react';
 import { usePathname } from "next/navigation";
 import { useLanguage } from '../../context/language-context';
+import Link from 'next/link';
 
 export default function Footer() {
   const [email, setEmail] = useState('');
@@ -22,10 +23,10 @@ export default function Footer() {
 
   const quickLinks = [
     { label: t('footer.quickLinks.home'), href: '/' },
-    { label: t('footer.quickLinks.products'), href: '/san-pham' },
+    { label: t('footer.quickLinks.products'), href: '/#products' },
     { label: t('footer.quickLinks.careers'), href: '/tuyen-dung' },
     { label: t('footer.quickLinks.news'), href: '/blog' },
-    { label: t('footer.quickLinks.contact'), href: '/lien-he' },
+    { label: t('footer.quickLinks.contact'), href: '/contact-us' },
   ];
 
   return (
@@ -34,7 +35,7 @@ export default function Footer() {
       <div className="relative max-w-7xl mx-auto">
         <div
           className="
-            rounded-4xl bg-gradient-to-r from-blue-700 to-blue-600 
+            rounded-4xl bg-gradient-to-r from-blue-800 to-blue-700 
             py-12 px-6 md:px-12
             shadow-xl
             relative z-20
@@ -58,10 +59,12 @@ export default function Footer() {
             </div>
 
             {/* Button */}
-            <button className="inline-flex items-center gap-2 px-8 py-4 bg-white text-blue-600 font-semibold rounded-full hover:bg-white/90 transition-all hover:gap-3 group">
-              {t('footer.cta.button')}
-              <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />                
-            </button>
+            <Link href="/contact-us">
+              <button className="inline-flex items-center gap-2 px-8 py-4 bg-white text-blue-600 font-semibold rounded-full hover:bg-white/90 transition-all hover:gap-3 group">
+                {t('footer.cta.button')}
+                <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+              </button>
+            </Link>
           </div>
         </div>
       </div>

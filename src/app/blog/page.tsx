@@ -79,7 +79,7 @@ export default function BlogPage() {
   const categories = Array.from(new Set(posts.map((p) => p.category)));
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 pt-24">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 pt-24 pb-24">
       {/* Hero Banner */}
       <div className="relative bg-gradient-to-r from-[#0a1628] to-[#1a2942] overflow-hidden">
         {/* Tech Pattern Background */}
