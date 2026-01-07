@@ -189,7 +189,7 @@ export default function DashboardPage() {
                   {stat.change > 0 && (
                     <div className="flex items-center mt-2 text-green-600 text-sm">
                       <TrendingUp className="w-4 h-4 mr-1" />
-                      <span>+{stat.change} this week</span>
+                      <span>+{stat.change} this month</span>
                     </div>
                   )}
                 </div>

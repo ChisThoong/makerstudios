@@ -29,7 +29,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="relative bg-black/90 text-white">
+    <footer className="relative bg-gradient-to-r from-[#0a1628] to-[#1a2942] text-white">
       {/* CTA Banner */}
       <div className="relative max-w-7xl mx-auto">
         <div

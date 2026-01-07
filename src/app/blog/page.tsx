@@ -79,9 +79,61 @@ export default function BlogPage() {
   const categories = Array.from(new Set(posts.map((p) => p.category)));
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-20 pb-40">
-      <div className="max-w-7xl mx-auto px-6 py-12">
-        <h1 className="text-5xl font-bold mb-12">{t('blogPage.title')}</h1>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 pt-24">
+      {/* Hero Banner */}
+      <div className="relative bg-gradient-to-r from-[#0a1628] to-[#1a2942] overflow-hidden">
+        {/* Tech Pattern Background */}
+        <div className="absolute inset-0 opacity-20">
+          {/* <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="tech-pattern" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
+                <circle cx="10" cy="10" r="2" fill="#3b82f6" />
+                <line x1="10" y1="10" x2="50" y2="30" stroke="#3b82f6" strokeWidth="1" />
+                <circle cx="50" cy="30" r="2" fill="#3b82f6" />
+                <line x1="50" y1="30" x2="80" y2="60" stroke="#3b82f6" strokeWidth="1" />
+                <circle cx="80" cy="60" r="2" fill="#3b82f6" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#tech-pattern)" />
+          </svg> */}
+        </div>
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Left Content */}
+            <div className="text-white space-y-6">
+              <h1 className="text-5xl md:text-6xl font-bold">
+                {t('blogPage.title')}
+              </h1>
+              
+              <div className="flex items-center space-x-2 text-md">
+                <a href="/" className="hover:text-blue-400 transition-colors">
+                  {t('nav.home')}
+                </a>
+                <span className="text-blue-400">|</span>
+                <span className="text-blue-400">{t('blogPage.title')}</span>
+              </div>
+            </div>
+
+            {/* Right Image */}
+            <div className="relative hidden lg:block">
+              <div className="relative z-10">
+                <img
+                  src="https://images.unsplash.com/photo-1556761175-b413da4baf72?w=800&auto=format&fit=crop"
+                  alt="Contact Us"
+                  className="rounded-lg shadow-2xl h-72 mx-auto"
+                />
+              </div>
+              {/* Decorative elements */}
+              <div className="absolute -top-4 -right-4 w-72 h-72 bg-blue-500/20 rounded-full blur-3xl"></div>
+              <div className="absolute -bottom-4 -left-4 w-72 h-72 bg-purple-500/20 rounded-full blur-3xl"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto py-12">
+        {/* <h1 className="text-5xl font-bold mb-12">{t('blogPage.title')}</h1> */}
 
         {loading && (
           <div className="flex justify-center py-20">
@@ -95,7 +147,13 @@ export default function BlogPage() {
 
         {!loading && !error && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
             <div className="lg:col-span-2 space-y-8">
+            <div className="">
+              <span className="px-4 py-2 bg-blue-100 text-blue-600 rounded-full text-md font-medium">
+                {t('blogPage.title')}
+              </span>
+            </div>
               {posts.map((post) => (
                 <BlogPostCard
                   key={post.id}
@@ -112,6 +170,7 @@ export default function BlogPage() {
           </div>
         )}
       </div>
+    </div>
     </div>
   );
 }

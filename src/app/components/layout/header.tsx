@@ -25,9 +25,9 @@ export default function Header() {
 
   const navItems = [
     { label: t('nav.home'), href: "/" },
-    { label: t('nav.products'), href: "/san-pham" },
+    { label: t('nav.products'), href: "#products" },
     { label: t('nav.news'), href: "/blog" },
-    { label: t('nav.contact'), href: "/lien-he" },
+    { label: t('nav.contact'), href: "/contact-us" },
   ];
 
   const languages = [
@@ -52,7 +52,7 @@ export default function Header() {
             : "bg-transparent"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className=" max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-24">
             {/* Logo */}
             <motion.div
