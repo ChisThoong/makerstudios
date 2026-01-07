@@ -30,11 +30,10 @@ async function getPost(id: string): Promise<BlogPost | null> {
     }
     
     const response = await res.json();
-    console.log('API Response:', response);
+
     
     // API trả về {success: true, post: {...}}
     const data = response.post || response;
-    
     // Check if we got the post data
     if (!data || !data._id) {
       console.error('Invalid post data:', data);
@@ -57,14 +56,13 @@ async function getPost(id: string): Promise<BlogPost | null> {
       content: data.content || "",
       author: {
         name: data.author?.name || "Admin",
-        role: data.author?.role || "Co. Founder",
-        avatar: data.author?.avatar || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100",
+        role: data.author?.role || "",
+        avatar: data.author?.avatar || "",
       },
       commentsCount: data.commentsCount || 0,
-      readTime: "5 phút đọc",
+      readTime: "",
     };
 
-    console.log('Transformed post:', post);
     return post;
     
   } catch (error) {
@@ -108,7 +106,7 @@ async function getSidebarData() {
         month: "long",
         year: "numeric",
       }),
-      image: p.featuredImage || "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=400",
+      image: p.featuredImage || "",
     }));
 
     const categories = Array.from(

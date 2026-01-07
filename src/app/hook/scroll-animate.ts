@@ -1,8 +1,11 @@
 "use client";
 
 import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 export function useScrollAnimation() {
+  const pathname = usePathname();
+
   useEffect(() => {
     const elements = document.querySelectorAll(".scroll-item");
 
@@ -11,19 +14,20 @@ export function useScrollAnimation() {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add("show");
-          } else {
-            entry.target.classList.remove("show"); // cho phép animate khi scroll ra
+            observer.unobserve(entry.target); 
           }
         });
       },
       {
-        rootMargin: "-10% 0px -10% 0px",
-        threshold: 0.2,
+        threshold: 0.15,
       }
     );
 
-    elements.forEach((el) => observer.observe(el));
+    elements.forEach((el) => {
+      el.classList.remove("show"); 
+      observer.observe(el);
+    });
 
     return () => observer.disconnect();
-  }, []);
+  }, [pathname]); 
 }
