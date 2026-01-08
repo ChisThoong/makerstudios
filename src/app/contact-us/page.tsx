@@ -8,6 +8,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Mail, Phone, Calendar, MapPin, Send } from "lucide-react";
 import { useLanguage } from "../context/language-context";
+import ContactModal from "../components/contact-modal";
+
 export default function ContactUsPage() {
   const { t } = useLanguage();
   const [formData, setFormData] = useState({
@@ -20,28 +22,49 @@ export default function ContactUsPage() {
 
   const maxMessageLength = 500;
 
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalStatus, setModalStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
+  const [modalMessage, setModalMessage] = useState("");
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setIsSubmitting(true);
-
+  
+    setModalOpen(true);
+    setModalStatus("loading");
+  
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      
-      toast.success(t('contact.success'));
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fullName: formData.fullName,
+          email: formData.email,
+          title: formData.subject,
+          message: formData.message,
+        }),
+      });
+  
+      const data = await res.json();
+  
+      if (!res.ok) throw new Error(data.message);
+  
+      setModalStatus("success");
+      setModalMessage(t("contact.success"));
+  
       setFormData({
         fullName: "",
         email: "",
         subject: "",
         message: "",
       });
-    } catch (error) {
-      toast.error(t('contact.error'));
-    } finally {
-      setIsSubmitting(false);
+    } catch (err: any) {
+      setModalStatus("error");
+      setModalMessage(err.message || t("contact.error"));
     }
   }
-
+  
   const contactInfo = [
     {
       icon: Mail,
@@ -67,7 +90,7 @@ export default function ContactUsPage() {
     {
       icon: MapPin,
       title: t('contact.location'),
-      items: ["19 Dinh Bo Linh Street"],
+      items: ["19 Dinh Bo Linh"],
       bgColor: "bg-blue-50",
       iconColor: "text-blue-600",
     },
@@ -249,6 +272,13 @@ export default function ContactUsPage() {
         </div>
       </div>
     </div>
+    <ContactModal
+      isOpen={modalOpen}
+      status={modalStatus}
+      message={modalMessage}
+      onClose={() => setModalOpen(false)}
+    />
+
     </div>
   );
 }

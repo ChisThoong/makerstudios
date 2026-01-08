@@ -12,6 +12,7 @@ import {
   Menu,
   X,
   MailCheck,
+  Contact,
 } from "lucide-react";
 
 export default function AdminSidebar() {
@@ -43,6 +44,16 @@ export default function AdminSidebar() {
       label: "Subscibers",
       href: "/admin/subscribers",
       icon: <MailCheck className="w-5 h-5" />,
+    },
+    {
+      label: "Contacts",
+      href: "/admin/contacts",
+      icon: <Contact className="w-5 h-5" />,
+    },
+    {
+      label: "Jobs",
+      href: "/admin/jobs",
+      icon: <Contact className="w-5 h-5" />,
     },
   ];
 
