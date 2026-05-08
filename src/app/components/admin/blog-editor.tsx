@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { useEditor, EditorContent, type Editor } from "@tiptap/react";
+import { mergeAttributes } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
 import Link from "@tiptap/extension-link";
@@ -39,6 +40,59 @@ type Props = {
   onChange: (value: string) => void;
 };
 
+const ResizableImage = Image.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      width: {
+        default: "100%",
+        parseHTML: (element) => element.getAttribute("width") || element.style.width || "100%",
+        renderHTML: (attributes) => ({
+          width: attributes.width,
+          style: `width: ${attributes.width}; max-width: 100%; height: auto;`,
+        }),
+      },
+      dataAlign: {
+        default: "center",
+        parseHTML: (element) => element.getAttribute("data-align") || "center",
+        renderHTML: (attributes) => {
+          const align = attributes.dataAlign || "center";
+          const margin =
+            align === "left"
+              ? "margin-left: 0; margin-right: auto;"
+              : align === "right"
+                ? "margin-left: auto; margin-right: 0;"
+                : "margin-left: auto; margin-right: auto;";
+
+          return {
+            "data-align": align,
+            style: `display: block; ${margin}`,
+          };
+        },
+      },
+    };
+  },
+  renderHTML({ HTMLAttributes }) {
+    const widthStyle = HTMLAttributes.width
+      ? `width: ${HTMLAttributes.width}; max-width: 100%; height: auto;`
+      : "max-width: 100%; height: auto;";
+    const align = HTMLAttributes["data-align"] || "center";
+    const margin =
+      align === "left"
+        ? "margin-left: 0; margin-right: auto;"
+        : align === "right"
+          ? "margin-left: auto; margin-right: 0;"
+          : "margin-left: auto; margin-right: auto;";
+
+    return [
+      "img",
+      mergeAttributes(HTMLAttributes, {
+        style: `${widthStyle} display: block; ${margin}`,
+      }),
+    ];
+  },
+});
+
 export default function BlogEditor({ value, onChange }: Props) {
   const lowlight = createLowlight();
 
@@ -47,7 +101,7 @@ export default function BlogEditor({ value, onChange }: Props) {
       StarterKit,
       Underline,
       Link.configure({ openOnClick: false }),
-      Image,
+      ResizableImage,
       CodeBlockLowlight.configure({ lowlight }),
       TextAlign.configure({
         types: ["heading", "paragraph"],
@@ -82,6 +136,44 @@ function Toolbar({ editor }: { editor: Editor }) {
   const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
   const [imageError, setImageError] = useState("");
+  const [isLinkDialogOpen, setIsLinkDialogOpen] = useState(false);
+  const [linkUrl, setLinkUrl] = useState("");
+  const [linkError, setLinkError] = useState("");
+  const imageAttrs = editor.getAttributes("image") as { width?: string; dataAlign?: string };
+  const imageWidthPercent = Number.parseInt((imageAttrs.width || "100%").replace("%", ""), 10) || 100;
+
+  const openLinkDialog = () => {
+    setLinkUrl((editor.getAttributes("link") as { href?: string }).href || "");
+    setLinkError("");
+    setIsLinkDialogOpen(true);
+  };
+
+  const applyLink = () => {
+    const trimmed = linkUrl.trim();
+    if (!trimmed) {
+      setLinkError("Please enter a URL.");
+      return;
+    }
+
+    editor.chain().focus().extendMarkRange("link").setLink({ href: trimmed }).run();
+    setLinkUrl("");
+    setLinkError("");
+    setIsLinkDialogOpen(false);
+  };
+
+  const removeLink = () => {
+    editor.chain().focus().extendMarkRange("link").unsetLink().run();
+    setLinkUrl("");
+    setLinkError("");
+    setIsLinkDialogOpen(false);
+  };
+
+  const updateImageWidth = (value: string) => {
+    const nextValue = Number.parseInt(value, 10);
+    if (!Number.isFinite(nextValue)) return;
+    const clamped = Math.min(100, Math.max(1, nextValue));
+    editor.chain().focus().updateAttributes("image", { width: `${clamped}%` }).run();
+  };
 
   const insertImageUrl = () => {
     const trimmed = imageUrl.trim();
@@ -90,7 +182,12 @@ function Toolbar({ editor }: { editor: Editor }) {
       return;
     }
 
-    editor.chain().focus().setImage({ src: trimmed }).run();
+    editor
+      .chain()
+      .focus()
+      .setImage({ src: trimmed })
+      .updateAttributes("image", { width: "100%", dataAlign: "center" })
+      .run();
     setImageUrl("");
     setImageError("");
     setIsImageDialogOpen(false);
@@ -116,7 +213,12 @@ function Toolbar({ editor }: { editor: Editor }) {
         throw new Error(data.message || "Upload failed");
       }
 
-      editor.chain().focus().setImage({ src: data.url }).run();
+      editor
+        .chain()
+        .focus()
+        .setImage({ src: data.url })
+        .updateAttributes("image", { width: "100%", dataAlign: "center" })
+        .run();
       setImageUrl("");
       setIsImageDialogOpen(false);
     } catch (err) {
@@ -281,10 +383,7 @@ function Toolbar({ editor }: { editor: Editor }) {
       {/* Media */}
       <div className="flex gap-0.5">
         <ToolbarButton
-          onClick={() => {
-            const url = prompt("Enter URL");
-            if (url) editor.chain().focus().setLink({ href: url }).run();
-          }}
+          onClick={openLinkDialog}
           active={editor.isActive("link")}
           tooltip="Insert Link"
         >
@@ -308,6 +407,124 @@ function Toolbar({ editor }: { editor: Editor }) {
           onChange={(event) => uploadEditorImage(event.target.files?.[0])}
         />
       </div>
+
+      {editor.isActive("image") && (
+        <div className="flex items-center gap-1 border-l border-gray-300 pl-2 ml-1">
+          <label className="flex items-center gap-1 rounded-lg border border-gray-200 bg-white px-2 py-1 text-xs font-semibold text-gray-700">
+            W
+            <input
+              type="number"
+              min={1}
+              max={100}
+              value={imageWidthPercent}
+              onChange={(event) => updateImageWidth(event.target.value)}
+              className="h-7 w-14 rounded-md border border-gray-200 px-2 text-sm font-semibold outline-none focus:border-blue-400"
+              title="Image width percent"
+            />
+            %
+          </label>
+          <ToolbarButton
+            active={(imageAttrs.dataAlign || "center") === "left"}
+            onClick={() => editor.chain().focus().updateAttributes("image", { dataAlign: "left" }).run()}
+            tooltip="Align image left"
+          >
+            <AlignLeft className="w-4 h-4" />
+          </ToolbarButton>
+          <ToolbarButton
+            active={(imageAttrs.dataAlign || "center") === "center"}
+            onClick={() => editor.chain().focus().updateAttributes("image", { dataAlign: "center" }).run()}
+            tooltip="Align image center"
+          >
+            <AlignCenter className="w-4 h-4" />
+          </ToolbarButton>
+          <ToolbarButton
+            active={(imageAttrs.dataAlign || "center") === "right"}
+            onClick={() => editor.chain().focus().updateAttributes("image", { dataAlign: "right" }).run()}
+            tooltip="Align image right"
+          >
+            <AlignRight className="w-4 h-4" />
+          </ToolbarButton>
+        </div>
+      )}
+
+      {isLinkDialogOpen && (
+        <div
+          className="fixed inset-0 z-[70] flex items-center justify-center bg-slate-950/45 px-4 py-6"
+          onClick={() => setIsLinkDialogOpen(false)}
+        >
+          <div
+            className="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-5 shadow-2xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="mb-4 flex items-center justify-between gap-4">
+              <div>
+                <h3 className="text-lg font-bold text-gray-900">Insert Link</h3>
+                <p className="mt-1 text-sm text-gray-500">Paste a URL for the selected text.</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsLinkDialogOpen(false)}
+                className="rounded-lg p-2 text-gray-500 transition hover:bg-gray-100 hover:text-gray-900"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <label className="mb-2 block text-sm font-semibold text-gray-700">
+              URL
+            </label>
+            <input
+              type="url"
+              value={linkUrl}
+              onChange={(event) => {
+                setLinkUrl(event.target.value);
+                setLinkError("");
+              }}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  event.preventDefault();
+                  applyLink();
+                }
+              }}
+              placeholder="https://example.com"
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:border-transparent focus:ring-2 focus:ring-blue-500"
+              autoFocus
+            />
+
+            <div className="mt-4 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+              {editor.isActive("link") && (
+                <button
+                  type="button"
+                  onClick={removeLink}
+                  className="inline-flex items-center justify-center rounded-lg border border-red-200 bg-white px-4 py-3 text-sm font-semibold text-red-600 transition hover:bg-red-50"
+                >
+                  Remove Link
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={() => setIsLinkDialogOpen(false)}
+                className="inline-flex items-center justify-center rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={applyLink}
+                className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
+              >
+                OK
+              </button>
+            </div>
+
+            {linkError && (
+              <p className="mt-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
+                {linkError}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
 
       {isImageDialogOpen && (
         <div

@@ -7,11 +7,17 @@ export interface Author {
   export interface BlogPost {
     id: string;
     image: string;
+    featuredImage?: string;
     category: string;
     date: string;
+    publishDate?: string;
     title: string;
     excerpt?: string;
     content?: string;
+    translations?: {
+      vi?: { title?: string; content?: string; excerpt?: string; featuredImage?: string };
+      en?: { title?: string; content?: string; excerpt?: string; featuredImage?: string };
+    };
     slug: string;
     author: Author;
     commentsCount: number;
@@ -22,7 +28,13 @@ export interface Author {
     id: string;
     title: string;
     date: string;
+    publishDate?: string;
     image: string;
+    featuredImage?: string;
+    translations?: {
+      vi?: { title?: string; content?: string; excerpt?: string; featuredImage?: string };
+      en?: { title?: string; content?: string; excerpt?: string; featuredImage?: string };
+    };
     slug: string;
   }
   

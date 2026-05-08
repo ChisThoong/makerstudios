@@ -1,15 +1,13 @@
 import { notFound } from "next/navigation";
-import { cookies } from "next/headers";
 import BlogPostDetail from "../components/blog-post-detail";
 import { ApiPost, BlogPost, RecentPost } from "../types/blog";
-import { getLocalizedText, LanguageCode } from "../../utils/localized-content";
 
 type Props = {
   params: Promise<{ id: string }>;
 };
 
 // Hàm lấy thông tin 1 bài post
-async function getPost(id: string, language: LanguageCode): Promise<BlogPost | null> {
+async function getPost(id: string): Promise<BlogPost | null> {
   try {
    
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
@@ -46,16 +44,19 @@ async function getPost(id: string, language: LanguageCode): Promise<BlogPost | n
     const post: BlogPost = {
       id: data._id,
       slug: data.slug || data._id,
-      image: getLocalizedText(data, language, "featuredImage") || data.featuredImage || "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=800",
+      image: data.featuredImage || "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=800",
+      featuredImage: data.featuredImage || "",
       category: data.categories?.[0] || "Uncategorized",
+      publishDate: data.publishDate,
       date: new Date(data.publishDate).toLocaleDateString("vi-VN", {
         day: "numeric",
         month: "long",
         year: "numeric",
       }),
-      title: getLocalizedText(data, language, "title"),
-      excerpt: getLocalizedText(data, language, "excerpt") || data.excerpt || "",
-      content: getLocalizedText(data, language, "content") || data.content || "",
+      title: data.title || "",
+      excerpt: data.excerpt || "",
+      content: data.content || "",
+      translations: data.translations,
       author: {
         name: data.author?.name || "Admin",
         role: data.author?.role || "",
@@ -74,7 +75,7 @@ async function getPost(id: string, language: LanguageCode): Promise<BlogPost | n
 }
 
 // Hàm lấy dữ liệu sidebar
-async function getSidebarData(language: LanguageCode) {
+async function getSidebarData() {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     const url = `${baseUrl}/api/blog`;
@@ -102,13 +103,16 @@ async function getSidebarData(language: LanguageCode) {
     const recentPosts: RecentPost[] = publishedPosts.slice(0, 3).map((p) => ({
       id: p._id,
       slug: p._id,
-      title: getLocalizedText(p, language, "title"),
+      title: p.title,
+      publishDate: p.publishDate,
       date: new Date(p.publishDate).toLocaleDateString("vi-VN", {
         day: "numeric",
         month: "long",
         year: "numeric",
       }),
-      image: getLocalizedText(p, language, "featuredImage") || p.featuredImage || "",
+      image: p.featuredImage || "",
+      featuredImage: p.featuredImage || "",
+      translations: p.translations,
     }));
 
     const categories = Array.from(
@@ -126,18 +130,17 @@ async function getSidebarData(language: LanguageCode) {
 // Main component
 export default async function BlogDetailPage({ params }: Props) {
   const { id } = await params;
-  const language = ((await cookies()).get("language")?.value === "en" ? "en" : "vi") as LanguageCode;
   
   console.log('Blog Detail Page - Post ID:', id);
   
-  const post = await getPost(id, language);
+  const post = await getPost(id);
   
   if (!post) {
     console.log('Post not found, calling notFound()');
     notFound();
   }
 
-  const { recentPosts, categories } = await getSidebarData(language);
+  const { recentPosts, categories } = await getSidebarData();
 
   return (
     <BlogPostDetail
@@ -151,8 +154,7 @@ export default async function BlogDetailPage({ params }: Props) {
 // Metadata (optional)
 export async function generateMetadata({ params }: Props) {
   const { id } = await params;
-  const language = ((await cookies()).get("language")?.value === "en" ? "en" : "vi") as LanguageCode;
-  const post = await getPost(id, language);
+  const post = await getPost(id);
   
   if (!post) {
     return {
