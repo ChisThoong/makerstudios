@@ -1,36 +1,186 @@
 "use client"
-import React, { useState } from 'react';
-import { Mail, Phone, Facebook, Twitter, Youtube, Instagram, ArrowRight, Calendar } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Mail, Facebook, Youtube, Instagram, ArrowRight, Calendar, Building2, MapPin } from 'lucide-react';
 import { usePathname } from "next/navigation";
 import { useLanguage } from '../../context/language-context';
-import Link from 'next/link';
+import SubscribeModal from '../subscribe-popup';
+
+interface ApiPost {
+  _id: string;
+  title: string;
+  featuredImage?: string;
+  publishDate?: string;
+  createdAt?: string;
+  status?: string;
+  visibility?: string;
+}
+
+interface FooterRecentPost {
+  id: string;
+  title: string;
+  date: string;
+  image: string;
+}
 
 export default function Footer() {
-  const [email, setEmail] = useState('');
-  const [agreed, setAgreed] = useState(false);
+  const [ctaEmail, setCtaEmail] = useState('');
+  const [recentPosts, setRecentPosts] = useState<FooterRecentPost[]>([]);
+  const [recentPostsLoading, setRecentPostsLoading] = useState(true);
+  const [modal, setModal] = useState({
+    isOpen: false,
+    status: "loading",
+    message: "",
+  });
   const pathname = usePathname();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  useEffect(() => {
+    if (pathname.startsWith("/admin") || pathname.startsWith("/login")) return;
+
+    const fetchRecentPosts = async () => {
+      try {
+        setRecentPostsLoading(true);
+        const response = await fetch('/api/blog');
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch blog posts');
+        }
+
+        const data: { posts?: ApiPost[] } = await response.json();
+        const posts = data.posts || [];
+
+        const latestPosts = posts
+          .filter((post) => {
+            const isPublished = !post.status || post.status === 'published';
+            const isPublic = !post.visibility || post.visibility === 'public';
+            return isPublished && isPublic;
+          })
+          .sort((a, b) => {
+            const aTime = new Date(a.publishDate || a.createdAt || 0).getTime();
+            const bTime = new Date(b.publishDate || b.createdAt || 0).getTime();
+            return bTime - aTime;
+          })
+          .slice(0, 3)
+          .map((post) => {
+            const date = post.publishDate || post.createdAt;
+
+            return {
+              id: post._id,
+              title: post.title,
+              image:
+                post.featuredImage ||
+                'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=200',
+              date: date
+                ? new Date(date).toLocaleDateString(language === 'vi' ? 'vi-VN' : 'en-US', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric',
+                  })
+                : '',
+            };
+          });
+
+        setRecentPosts(latestPosts);
+      } catch {
+        setRecentPosts([]);
+      } finally {
+        setRecentPostsLoading(false);
+      }
+    };
+
+    fetchRecentPosts();
+  }, [language, pathname]);
   
   if (pathname.startsWith("/admin") || pathname.startsWith("/login")) return null;
 
-  const handleSubmit = () => {
-    if (email && agreed) {
-      alert('Subscribed successfully!');
-      setEmail('');
-      setAgreed(false);
+  const submitCtaEmail = async () => {
+    if (!ctaEmail.trim()) {
+      setModal({
+        isOpen: true,
+        status: "error",
+        message: t('modal.errorEmpty'),
+      });
+      return;
+    }
+
+    if (!emailRegex.test(ctaEmail)) {
+      setModal({
+        isOpen: true,
+        status: "error",
+        message: t('modal.errorInvalid'),
+      });
+      return;
+    }
+
+    setModal({
+      isOpen: true,
+      status: "loading",
+      message: "",
+    });
+
+    try {
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        body: JSON.stringify({ email: ctaEmail }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        setModal({
+          isOpen: true,
+          status: "success",
+          message: t('modal.success'),
+        });
+        setCtaEmail('');
+      } else {
+        let errorMessage = data.message || data.error;
+        const raw = (data.message || data.error || "").toLowerCase();
+
+        if (raw.includes("already") || raw.includes("exist") || raw.includes("đã tồn tại")) {
+          errorMessage = t('modal.errorExists');
+        }
+
+        setModal({
+          isOpen: true,
+          status: "error",
+          message: errorMessage,
+        });
+      }
+    } catch {
+      setModal({
+        isOpen: true,
+        status: "error",
+        message: t('modal.errorConnection'),
+      });
+    }
+  };
+
+  const handleCtaKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      submitCtaEmail();
     }
   };
 
   const quickLinks = [
     { label: t('footer.quickLinks.home'), href: '/' },
     { label: t('footer.quickLinks.products'), href: '/#products' },
-    { label: t('footer.quickLinks.careers'), href: '/tuyen-dung' },
+    // { label: t('footer.quickLinks.careers'), href: '/tuyen-dung' },
     { label: t('footer.quickLinks.news'), href: '/blog' },
-    { label: t('footer.quickLinks.contact'), href: '/contact-us' },
+    // { label: t('footer.quickLinks.contact'), href: '/contact-us' },
   ];
 
   return (
     <footer className="relative bg-gradient-to-r from-[#0a1628] to-[#1a2942] text-white">
+      <SubscribeModal
+        isOpen={modal.isOpen}
+        status={modal.status}
+        message={modal.message}
+        onClose={() =>
+          setModal({ isOpen: false, status: "loading", message: "" })
+        }
+      />
       {/* CTA Banner */}
       <div className="relative max-w-7xl mx-auto">
         <div
@@ -53,18 +203,29 @@ export default function Footer() {
                 />
               </div>
               <div>
-                <h2 className="text-3xl md:text-4xl font-bold mb-2">{t('footer.cta.title1')}</h2>
-                <h3 className="text-2xl md:text-3xl font-bold">{t('footer.cta.title2')}</h3>
+                <h2 className="text-3xl md:text-4xl font-bold mb-2 w-80">{t('footer.cta.title1')}</h2>
               </div>
             </div>
 
-            {/* Button */}
-            <Link href="/contact-us">
-              <button className="inline-flex items-center gap-2 px-8 py-4 bg-white text-blue-600 font-semibold rounded-full hover:bg-white/90 transition-all hover:gap-3 group">
-                {t('footer.cta.button')}
-                <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+            {/* Email Form */}
+            <div className="flex w-full max-w-xl flex-col gap-3 text-black sm:flex-row">
+              <input
+                type="email"
+                value={ctaEmail}
+                onChange={(e) => setCtaEmail(e.target.value)}
+                onKeyDown={handleCtaKeyDown}
+                placeholder={t('hero.emailPlaceholder')}
+                className="min-h-[56px] flex-1 rounded-2xl border-2 border-white/70 bg-white px-5 py-3 text-base text-black placeholder:text-gray-400 focus:outline-none focus:border-blue-200"
+              />
+              <button
+                type="button"
+                onClick={submitCtaEmail}
+                className="inline-flex min-h-[56px] items-center justify-center gap-2 rounded-2xl bg-white px-7 py-3 text-base font-semibold text-blue-700 transition-colors hover:bg-white/90"
+              >
+                {t('footer.cta.subscribe')}
+                <ArrowRight size={20} />
               </button>
-            </Link>
+            </div>
           </div>
         </div>
       </div>
@@ -114,84 +275,57 @@ export default function Footer() {
           <div>
             <h3 className="text-xl font-bold mb-6">{t('footer.recentPosts')}</h3>
             <div className="space-y-4">
-              <div className="flex gap-3">
-                <img 
-                  src="https://images.unsplash.com/photo-1531482615713-2afd69097998?w=100&h=100&fit=crop" 
-                  alt="Post" 
-                  className="w-16 h-16 rounded object-cover flex-shrink-0"
-                />
-                <div>
-                  <p className="flex items-center gap-2 text-xs text-gray-400 mb-1">
-                    <Calendar size={16} className="text-blue-600" />
-                    15th April, 2024
-                  </p>
-                  <h4 className="text-sm font-medium hover:text-blue-600 transition-colors cursor-pointer">
-                    Top 5 Most Famous Technology Trend In 2024
-                  </h4>
-                </div>
-              </div>
-              <div className="flex gap-3">
-                <img 
-                  src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=100&h=100&fit=crop" 
-                  alt="Post" 
-                  className="w-16 h-16 rounded object-cover flex-shrink-0"
-                />
-                <div>
-                  <p className="flex items-center gap-2 text-xs text-gray-400 mb-1">
-                    <Calendar size={16} className="text-blue-600" />
-                    15th April, 2024
-                  </p>
-                  <h4 className="text-sm font-medium hover:text-blue-600 transition-colors cursor-pointer">
-                    The Surfing Man Will Blow Your Mind
-                  </h4>
-                </div>
-              </div>
+              {recentPostsLoading && (
+                <p className="text-sm text-gray-400">{t('blog.loading')}</p>
+              )}
+
+              {!recentPostsLoading && recentPosts.length === 0 && (
+                <p className="text-sm text-gray-400">{t('blog.noPosts')}</p>
+              )}
+
+              {!recentPostsLoading && recentPosts.map((post) => (
+                <a key={post.id} href={`/blog/${post.id}`} className="flex gap-3 group">
+                  <img
+                    src={post.image}
+                    alt={post.title}
+                    className="w-16 h-16 rounded object-cover flex-shrink-0"
+                  />
+                  <div>
+                    <p className="flex items-center gap-2 text-xs text-gray-400 mb-1">
+                      <Calendar size={16} className="text-blue-600" />
+                      {post.date}
+                    </p>
+                    <h4 className="text-sm font-medium transition-colors group-hover:text-blue-600 line-clamp-2">
+                      {post.title}
+                    </h4>
+                  </div>
+                </a>
+              ))}
             </div>
           </div>
 
           {/* Contact Us */}
           <div>
             <h3 className="text-xl font-bold mb-6">{t('footer.contactUs')}</h3>
-            <div className="space-y-4 mb-6">
-              <a href="mailto:contact@makerstudios.gg" className="flex items-center gap-3 text-gray-400 hover:text-white transition-colors">
-                <Mail size={20} className="text-blue-600" />
-                <span>contact@makerstudios.gg</span>
-              </a>
-              <a href="tel:+208-6666-0112" className="flex items-center gap-3 text-gray-400 hover:text-white transition-colors">
-                <Phone size={20} className="text-blue-600" />
-                <span>+099-9999-9999</span>
-              </a>
-            </div>
-            <div className="space-y-4">
-              <div className="relative">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder={t('footer.emailPlaceholder')}
-                  className="w-full bg-white text-gray-900 px-4 py-3 rounded-2xl pr-12 focus:outline-none focus:ring-2 focus:ring-blue-600"
-                />
-                <button
-                  onClick={handleSubmit}
-                  className="absolute right-1 top-1 bg-blue-600 text-white w-10 h-10 rounded-2xl flex items-center justify-center hover:bg-blue-700 transition-colors"
-                >
-                  <ArrowRight size={20} />
-                </button>
+            <div className="space-y-3 text-sm text-gray-300">
+              <div className="flex items-start gap-3">
+                <Building2 size={18} className="mt-0.5 flex-shrink-0 text-blue-500" />
+                <span className="font-semibold text-white">{t('footer.company.name')}</span>
               </div>
-              <label className="flex items-start gap-2 text-sm text-gray-400 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={agreed}
-                  onChange={(e) => setAgreed(e.target.checked)}
-                  className="mt-1"
-                />
+              <div className="flex items-start gap-3">
+                <MapPin size={18} className="mt-0.5 flex-shrink-0 text-blue-500" />
                 <span>
-                  {t('footer.agreeWith')}{' '}
-                  <a href="#" className="text-blue-600 hover:underline">
-                    {t('footer.privacyPolicy')}
-                  </a>
+                  <span className="font-semibold text-white">{t('footer.company.addressLabel')}: </span>
+                  {t('footer.company.address')}
                 </span>
-              </label>
+              </div>
+              <a href="mailto:contact@makerstudios.gg" className="flex items-start gap-3 hover:text-white transition-colors">
+                <Mail size={18} className="mt-0.5 flex-shrink-0 text-blue-500" />
+                <span>
+                  <span className="font-semibold text-white">{t('footer.company.emailLabel')}: </span>
+                  contact@makerstudios.gg
+                </span>
+              </a>
             </div>
           </div>
         </div>

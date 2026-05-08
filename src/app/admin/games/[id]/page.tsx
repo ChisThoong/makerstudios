@@ -26,6 +26,8 @@ export default function EditGamePage() {
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [url, setUrl] = useState("");
+  const [googlePlayUrl, setGooglePlayUrl] = useState("");
+  const [appStoreUrl, setAppStoreUrl] = useState("");
   const [banner, setBanner] = useState("");
   const [logo, setLogo] = useState("");
   const [description, setDescription] = useState("");
@@ -61,6 +63,8 @@ export default function EditGamePage() {
           setName(game.name || "");
           setSlug(game.slug || "");
           setUrl(game.url || "");
+          setGooglePlayUrl(game.googlePlayUrl || "");
+          setAppStoreUrl(game.appStoreUrl || "");
           setBanner(game.banner || "");
           setLogo(game.logo || "");
           setDescription(game.description || "");
@@ -128,6 +132,8 @@ export default function EditGamePage() {
           name,
           slug,
           url,
+          googlePlayUrl,
+          appStoreUrl,
           banner,
           logo,
           description,
@@ -279,6 +285,41 @@ export default function EditGamePage() {
                 <p className="text-xs text-gray-500 mt-1">
                   The homepage URL of the game
                 </p>
+              </div>
+
+              {/* Download URLs */}
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Google Play URL
+                  </label>
+                  <input
+                    type="url"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="https://play.google.com/store/apps/details?id=..."
+                    value={googlePlayUrl}
+                    onChange={(e) => setGooglePlayUrl(e.target.value)}
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Download URL for Android users
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    App Store URL
+                  </label>
+                  <input
+                    type="url"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="https://apps.apple.com/app/..."
+                    value={appStoreUrl}
+                    onChange={(e) => setAppStoreUrl(e.target.value)}
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Download URL for iOS users
+                  </p>
+                </div>
               </div>
 
               {/* Description */}

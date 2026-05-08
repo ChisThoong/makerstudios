@@ -17,9 +17,11 @@ export async function GET() {
 
     const data = await apiRes.json();
     return NextResponse.json(data, { status: apiRes.status });
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Internal server error";
+
     return NextResponse.json(
-      { success: false, message: err.message },
+      { success: false, message },
       { status: 500 }
     );
   }
@@ -37,6 +39,8 @@ export async function POST(req: Request) {
     //   name: string,
     //   slug: string,
     //   url: string,
+    //   googlePlayUrl?: string,
+    //   appStoreUrl?: string,
     //   banner: string,
     //   logo: string,
     //   description: string,
@@ -56,9 +60,11 @@ export async function POST(req: Request) {
 
     const data = await apiRes.json();
     return NextResponse.json(data, { status: apiRes.status });
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Internal server error";
+
     return NextResponse.json(
-      { success: false, message: err.message },
+      { success: false, message },
       { status: 500 }
     );
   }

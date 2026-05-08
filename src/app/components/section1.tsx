@@ -127,40 +127,45 @@ const Section1 = () => {
         <div className={`container mx-auto px-6 sm:px-8 max-w-7xl transition-all duration-1000 ${
           loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
         }`}>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-center py-8 sm:py-0">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 items-center py-10 md:py-14 lg:py-0">
             {/* Left Content */}
-            <div className={`space-y-4 sm:space-y-6 max-w-xl md:max-w-full transition-all duration-1000 delay-200 ${
+            <div className={`space-y-4 md:space-y-5 lg:space-y-6 max-w-xl md:max-w-3xl lg:max-w-full mx-auto lg:mx-0 pt-16 md:pt-20 lg:pt-16 transition-all duration-1000 delay-200 ${
               loaded ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
             }`}>
               {/* Logo */}
-              <div className="flex items-center justify-center sm:justify-start w-full">
+              <div className="flex items-center justify-center lg:justify-start w-full">
                 <AnimatedTitle>
                   {t('hero.weAre')}
                 </AnimatedTitle>
               </div>
               
               {/* Heading */}
-              <AnimatedSplitText 
-                text={t('hero.title')}
-                className="text-5xl sm:text-8xl font-bold text-gray-900 font-bebas text-center sm:text-left"
-              />
+              <div className="flex w-full justify-center lg:justify-start">
+                <AnimatedSplitText
+                  text={t('hero.title')}
+                  className="text-5xl md:text-7xl lg:text-8xl font-bold text-gray-900 font-bebas text-center lg:text-left"
+                />
+              </div>
                      
               {/* Vietnamese Text */}
-              <h2 className="text-lg sm:text-2xl font-bold text-gray-800 text-center sm:text-left scroll-item scroll-up">
+              {/* <h2 className="text-lg sm:text-2xl font-bold text-gray-800 text-center sm:text-left scroll-item scroll-up">
                 {t('hero.welcome')}
-              </h2>
+              </h2> */}
               
               {/* Description */}
-              <p className="text-base sm:text-lg text-black font-base leading-relaxed text-center sm:text-left scroll-item scroll-up">
+              <p className="text-base md:text-lg text-black font-base leading-relaxed text-center lg:text-left scroll-item scroll-up">
                 {t('hero.description1')}
               </p>
               
-              <p className="text-base sm:text-lg text-black font-base leading-relaxed text-center sm:text-left scroll-item scroll-up">
+              <p className="text-base md:text-lg text-black font-base leading-relaxed text-center lg:text-left scroll-item scroll-up">
                 {t('hero.description2')}
+              </p>
+              <p className="text-base md:text-lg text-black font-base leading-relaxed text-center lg:text-left scroll-item scroll-up">
+                {t('hero.description3')}
               </p>
               
               {/* Email Form */}
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-2xl md:max-w-full text-black scroll-item scroll-up">
+              {/* <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-2xl md:max-w-full text-black scroll-item scroll-up">
                 <input
                   type="email"
                   value={email}
@@ -174,11 +179,11 @@ const Section1 = () => {
                   className="px-8 py-3 sm:px-12 sm:py-4 text-lg sm:text-xl bg-blue-700 text-white font-semibold rounded-2xl hover:bg-blue-800 transition-colors">
                   {t('hero.subscribe')}
                 </button>
-              </div>
+              </div> */}
             </div>
             
             {/* Right Content - Characters Image */}
-            <div className={`scroll-item scroll-right flex items-center justify-center min-h-[550px] sm:min-h-[600px] transition-all duration-1000 delay-300 ${
+            <div className={`scroll-item scroll-right flex items-center justify-center min-h-[550px] md:min-h-[520px] lg:min-h-[600px] transition-all duration-1000 delay-300 ${
               loaded ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'
             }`}>
               <Characters />

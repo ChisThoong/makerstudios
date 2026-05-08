@@ -26,9 +26,9 @@ export default function Header() {
   const navItems = [
     { label: t('nav.home'), href: "/" },
     { label: t('nav.products'), href: "/#products" },
-    { label: t('nav.carrer'), href: "/carrer" },
+    // { label: t('nav.carrer'), href: "/carrer" },
     { label: t('nav.news'), href: "/blog" },
-    { label: t('nav.contact'), href: "/contact-us" },
+    // { label: t('nav.contact'), href: "/contact-us" },
   ];
 
   const languages = [
