@@ -335,12 +335,12 @@ export default function StatisticsSection() {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 aria-label={`Download ${activeGame.name} on Google Play`}
-                                className="inline-flex min-h-[56px] items-center justify-center rounded-2xl border-2 border-blue-200 bg-white px-4 py-2 shadow-[0_14px_30px_rgba(37,99,235,0.16)] transition hover:-translate-y-0.5 hover:border-blue-400 hover:shadow-[0_18px_34px_rgba(37,99,235,0.20)]"
+                                className="inline-flex items-center justify-center transition hover:-translate-y-0.5"
                               >
                                 <img
                                   src="/images/button_android.png"
                                   alt="Get it on Google Play"
-                                  className="h-11 w-auto object-contain md:h-12"
+                                  className="h-[56px] w-auto object-contain md:h-[60px]"
                                 />
                               </a>
                             )}
@@ -351,12 +351,12 @@ export default function StatisticsSection() {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 aria-label={`Download ${activeGame.name} on the App Store`}
-                                className="inline-flex min-h-[56px] items-center justify-center rounded-2xl border-2 border-blue-200 bg-white px-4 py-2 shadow-[0_14px_30px_rgba(37,99,235,0.16)] transition hover:-translate-y-0.5 hover:border-blue-400 hover:shadow-[0_18px_34px_rgba(37,99,235,0.20)]"
+                                className="inline-flex items-center justify-center transition hover:-translate-y-0.5"
                               >
                                 <img
                                   src="/images/button_apple.png"
                                   alt="Download on the App Store"
-                                  className="h-11 w-auto object-contain md:h-12"
+                                  className="h-[56px] w-auto object-contain md:h-[60px]"
                                 />
                               </a>
                             )}

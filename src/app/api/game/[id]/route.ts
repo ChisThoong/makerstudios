@@ -4,6 +4,20 @@ import { NextResponse } from "next/server";
 const API_URL = process.env.API_SERVER_URL;
 const API_KEY = process.env.API_SECRET_KEY!;
 
+async function parseApiResponse(apiRes: Response) {
+  const text = await apiRes.text();
+
+  try {
+    return JSON.parse(text);
+  } catch {
+    return {
+      success: false,
+      message: `API server returned ${apiRes.status} ${apiRes.statusText || "non-JSON response"}`,
+      detail: text.slice(0, 180),
+    };
+  }
+}
+
 // GET /api/game/:id - Get single game
 export async function GET(
   req: Request,
@@ -18,22 +32,20 @@ export async function GET(
       },
     });
 
+    const data = await parseApiResponse(apiRes);
     if (!apiRes.ok) {
-      return NextResponse.json(
-        { success: false, message: "Game not found" },
-        { status: 404 }
-      );
+      return NextResponse.json(data, { status: apiRes.status });
     }
-
-    const data = await apiRes.json();
     
     // Return the data as-is, transformation will happen in the page component
     return NextResponse.json(data, { status: 200 });
     
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Internal server error";
+
     console.error("Error in GET /api/game/[id]:", err);
     return NextResponse.json(
-      { success: false, message: err.message || "Internal server error" },
+      { success: false, message },
       { status: 500 }
     );
   }
@@ -57,13 +69,15 @@ export async function PUT(
       body: JSON.stringify(body),
     });
 
-    const data = await apiRes.json();
+    const data = await parseApiResponse(apiRes);
     return NextResponse.json(data, { status: apiRes.status });
     
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Internal server error";
+
     console.error("Error in PUT /api/game/[id]:", err);
     return NextResponse.json(
-      { success: false, message: err.message || "Internal server error" },
+      { success: false, message },
       { status: 500 }
     );
   }
@@ -84,13 +98,15 @@ export async function DELETE(
       },
     });
 
-    const data = await apiRes.json();
+    const data = await parseApiResponse(apiRes);
     return NextResponse.json(data, { status: apiRes.status });
     
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Internal server error";
+
     console.error("Error in DELETE /api/game/[id]:", err);
     return NextResponse.json(
-      { success: false, message: err.message || "Internal server error" },
+      { success: false, message },
       { status: 500 }
     );
   }
