@@ -17,10 +17,15 @@ import {
 
 export default function NewBlogPage() {
   const router = useRouter();
+  const [activeLocale, setActiveLocale] = useState<"vi" | "en">("vi");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [slug, setSlug] = useState("");
   const [excerpt, setExcerpt] = useState("");
+  const [translations, setTranslations] = useState({
+    vi: { title: "", content: "", excerpt: "" },
+    en: { title: "", content: "", excerpt: "" },
+  });
   const [featuredImage, setFeaturedImage] = useState("");
   const [publishDate, setPublishDate] = useState(new Date().toISOString().slice(0, 16));
   const [status, setStatus] = useState<"draft" | "published">("draft");
@@ -70,16 +75,21 @@ export default function NewBlogPage() {
   };
 
   const handleSubmit = async (saveStatus: "draft" | "published") => {
+    const primaryTitle = translations.vi.title || title;
+    const primaryContent = translations.vi.content || content;
+    const primaryExcerpt = translations.vi.excerpt || excerpt;
+
     setLoading(true);
 
     const res = await fetch("/api/blog", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        title,
+        title: primaryTitle,
         slug,
-        content,
-        excerpt,
+        content: primaryContent,
+        excerpt: primaryExcerpt,
+        translations,
         featuredImage,
         publishDate,
         status: saveStatus,
@@ -129,21 +139,43 @@ export default function NewBlogPage() {
             </div>
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 space-y-6">
+              <div className="flex w-fit rounded-lg border border-blue-100 bg-blue-50 p-1">
+                {(["vi", "en"] as const).map((locale) => (
+                  <button
+                    key={locale}
+                    type="button"
+                    onClick={() => setActiveLocale(locale)}
+                    className={`rounded-md px-4 py-2 text-sm font-semibold transition ${
+                      activeLocale === locale
+                        ? "bg-blue-600 text-white shadow-sm"
+                        : "text-blue-700 hover:bg-white"
+                    }`}
+                  >
+                    {locale === "vi" ? "Tiếng Việt" : "English"}
+                  </button>
+                ))}
+              </div>
+
               {/* Title */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Title *
+                  Title ({activeLocale.toUpperCase()}) *
                 </label>
                 <input
                   type="text"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
                   placeholder="Enter an engaging title..."
-                  value={title}
+                  value={translations[activeLocale].title}
                   onChange={(e) => {
-                    setTitle(e.target.value);
-                    if (!slug) {
+                    const value = e.target.value;
+                    setTranslations((current) => ({
+                      ...current,
+                      [activeLocale]: { ...current[activeLocale], title: value },
+                    }));
+                    if (activeLocale === "vi") setTitle(value);
+                    if (activeLocale === "vi" && !slug) {
                       setSlug(
-                        e.target.value
+                        value
                           .toLowerCase()
                           .replace(/\s+/g, "-")
                           .replace(/[^a-z0-9-]/g, "")
@@ -176,22 +208,39 @@ export default function NewBlogPage() {
               {/* Content Editor */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Content *
+                  Content ({activeLocale.toUpperCase()}) *
                 </label>
-                <BlogEditor value={content} onChange={setContent} />
+                <BlogEditor
+                  key={activeLocale}
+                  value={translations[activeLocale].content}
+                  onChange={(value) => {
+                    setTranslations((current) => ({
+                      ...current,
+                      [activeLocale]: { ...current[activeLocale], content: value },
+                    }));
+                    if (activeLocale === "vi") setContent(value);
+                  }}
+                />
               </div>
 
               {/* Excerpt */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Excerpt
+                  Excerpt ({activeLocale.toUpperCase()})
                 </label>
                 <textarea
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                   rows={3}
                   placeholder="Brief summary of your post (optional)..."
-                  value={excerpt}
-                  onChange={(e) => setExcerpt(e.target.value)}
+                  value={translations[activeLocale].excerpt}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setTranslations((current) => ({
+                      ...current,
+                      [activeLocale]: { ...current[activeLocale], excerpt: value },
+                    }));
+                    if (activeLocale === "vi") setExcerpt(value);
+                  }}
                 />
                 <p className="text-xs text-gray-500 mt-1">
                   This will be shown in blog listings and search results

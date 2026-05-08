@@ -206,9 +206,9 @@ const translations = {
     'hero.weAre': 'WE ARE',
     'hero.title': 'MAKER STUDIOS',
     'hero.welcome': 'Thank you for visiting Maker Studios!',
-    'hero.description1': 'We are a young game studio in Vietnam. We are working hard every day to create quality products and establish our position both domestically and internationally.',
-    'hero.description2': 'Sign up with your email to receive the latest updates about games developed specifically for the Vietnamese market.',
-    'hero.description3': 'Từ công nghệ đến con người, mọi điều Maker Studios xây dựng đều hướng đến một mục tiêu: đưa dấu ấn sáng tạo Việt vươn xa trên bản đồ game thế giới.',
+    'hero.description1': 'We are a young game studio from Vietnam, driven by the ambition to create creative and distinctive entertainment experiences.',
+    'hero.description2': 'We believe that quality games know no limits — and that Vietnamese developers are fully capable of building them.',
+    'hero.description3': "From technology to talent, everything Maker Studios builds serves one goal: to put Vietnam's creative mark on the world's gaming map.",
     'hero.emailPlaceholder': 'Enter your email address...',
     'hero.subscribe': 'Subscribe',
 
@@ -383,12 +383,14 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     const savedLang = localStorage.getItem('language') as Language;
     if (savedLang && (savedLang === 'vi' || savedLang === 'en')) {
       setLanguageState(savedLang);
+      document.cookie = `language=${savedLang}; path=/; max-age=31536000; SameSite=Lax`;
     }
   }, []);
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
     localStorage.setItem('language', lang);
+    document.cookie = `language=${lang}; path=/; max-age=31536000; SameSite=Lax`;
   };
 
   const t = (key: string): string => {

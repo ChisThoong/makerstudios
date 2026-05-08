@@ -5,6 +5,7 @@ import AnimatedTitle from './ui/animated-title';
 import AnimatedSplitText from './ui/animated-split-text';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '../context/language-context';
+import { getLocalizedText } from '../utils/localized-content';
 
 // Type definitions
 interface Author {
@@ -35,6 +36,10 @@ interface ApiPost {
   publishDate: string;
   excerpt?: string;
   content?: string;
+  translations?: {
+    vi?: { title?: string; content?: string; excerpt?: string };
+    en?: { title?: string; content?: string; excerpt?: string };
+  };
   author?: {
     name?: string;
     role?: string;
@@ -72,7 +77,7 @@ export default function Section4() {
 
   useEffect(() => {
     fetchBlogPosts();
-  }, []);
+  }, [language]);
 
   const fetchBlogPosts = async () => {
     try {
@@ -100,8 +105,8 @@ export default function Section4() {
           day: 'numeric', 
           year: 'numeric' 
         }).toUpperCase(),
-        title: post.title,
-        excerpt: post.excerpt,
+        title: getLocalizedText(post, language, 'title'),
+        excerpt: getLocalizedText(post, language, 'excerpt') || post.excerpt,
         slug: post.slug,
         author: {
           name: post.author?.name || 'Admin',
@@ -114,9 +119,9 @@ export default function Section4() {
 
       setBlogPosts(transformedPosts);
       setError(null);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching blog posts:', err);
-      setError(err.message);
+      setError(err instanceof Error ? err.message : 'Failed to fetch blog posts');
     } finally {
       setLoading(false);
     }

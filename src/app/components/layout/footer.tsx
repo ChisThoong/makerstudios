@@ -4,10 +4,15 @@ import { Mail, Facebook, Youtube, Instagram, ArrowRight, Calendar, Building2, Ma
 import { usePathname } from "next/navigation";
 import { useLanguage } from '../../context/language-context';
 import SubscribeModal from '../subscribe-popup';
+import { getLocalizedText } from '../../utils/localized-content';
 
 interface ApiPost {
   _id: string;
   title: string;
+  translations?: {
+    vi?: { title?: string; content?: string; excerpt?: string };
+    en?: { title?: string; content?: string; excerpt?: string };
+  };
   featuredImage?: string;
   publishDate?: string;
   createdAt?: string;
@@ -67,7 +72,7 @@ export default function Footer() {
 
             return {
               id: post._id,
-              title: post.title,
+              title: getLocalizedText(post, language, 'title'),
               image:
                 post.featuredImage ||
                 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=200',

@@ -2,10 +2,12 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { BlogPost, RecentPost, ApiResponse, ApiPost } from "./types/blog";
 import BlogPostCard from "./components/blog-post-card";
 import BlogSidebar from "./components/blog-sidebar";
 import { useLanguage } from "../context/language-context";
+import { getLocalizedText } from "../utils/localized-content";
 export default function BlogPage() {
   const router = useRouter();
   const { t, language } = useLanguage();
@@ -45,9 +47,9 @@ export default function BlogPage() {
               year: "numeric",
             }
           ),
-          title: post.title,
-          excerpt: post.excerpt,
-          content: post.content,
+          title: getLocalizedText(post, language, "title"),
+          excerpt: getLocalizedText(post, language, "excerpt") || post.excerpt,
+          content: getLocalizedText(post, language, "content") || post.content,
           author: {
             name: post.author?.name || "Admin",
             role: post.author?.role || "Co. Founder",
@@ -61,8 +63,8 @@ export default function BlogPage() {
 
       setPosts(transformedPosts);
       setError(null);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to fetch blog posts");
     } finally {
       setLoading(false);
     }
@@ -107,9 +109,9 @@ export default function BlogPage() {
               </h1>
               
               <div className="flex items-center space-x-2 text-md">
-                <a href="/" className="hover:text-blue-400 transition-colors">
+                <Link href="/" className="hover:text-blue-400 transition-colors">
                   {t('nav.home')}
-                </a>
+                </Link>
                 <span className="text-blue-400">|</span>
                 <span className="text-blue-400">{t('blogPage.title')}</span>
               </div>

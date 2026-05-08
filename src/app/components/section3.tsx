@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react';
 import AnimatedTitleCenter from './ui/animated-title-center';
 import { useLanguage } from '../context/language-context';
+import { getLocalizedText } from '../utils/localized-content';
 
 interface Game {
   _id: string;
@@ -15,6 +16,10 @@ interface Game {
   banner: string;
   logo: string;
   description: string;
+  translations?: {
+    vi?: { name?: string; description?: string };
+    en?: { name?: string; description?: string };
+  };
   status: string;
   categories: string[];
   tags: string[];
@@ -22,7 +27,7 @@ interface Game {
 }
 
 export default function StatisticsSection() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [loaded, setLoaded] = useState(false);
   const [games, setGames] = useState<Game[]>([]);
   const [loadingGames, setLoadingGames] = useState(true);
@@ -105,6 +110,8 @@ export default function StatisticsSection() {
   const activeGame = games[activeGameIndex];
   const canSlideGames = games.length > 1;
   const hasStoreDownloads = Boolean(activeGame?.googlePlayUrl || activeGame?.appStoreUrl);
+  const activeGameName = activeGame ? getLocalizedText(activeGame, language, "name") : "";
+  const activeGameDescription = activeGame ? getLocalizedText(activeGame, language, "description") : "";
   const activeGameGenres = activeGame
     ? [...(activeGame.categories || []), ...(activeGame.tags || [])].filter(Boolean)
     : [];
@@ -261,7 +268,7 @@ export default function StatisticsSection() {
                       )}
                       <div className="min-w-0">
                         <h3 className="truncate text-xl font-bold  leading-tight text-white drop-shadow md:text-2xl">
-                          {activeGame.name}
+                          {activeGameName}
                         </h3>
                         <a
                           href={activeGame.url}
@@ -281,7 +288,7 @@ export default function StatisticsSection() {
                           <button
                             key={game._id}
                             type="button"
-                            aria-label={`Go to ${game.name}`}
+                            aria-label={`Go to ${getLocalizedText(game, language, "name")}`}
                             onClick={() => setActiveGameIndex(index)}
                             className={`h-2.5 rounded-full transition-all ${
                               index === activeGameIndex ? 'w-7 bg-white' : 'w-2.5 bg-white/55 hover:bg-white/80'
@@ -304,7 +311,7 @@ export default function StatisticsSection() {
                       transition={{ duration: 0.46, ease: [0.22, 1, 0.36, 1] }}
                     >
                       <h3 className="font-bebas text-5xl font-bold uppercase leading-none text-slate-900 md:text-7xl">
-                        {activeGame.name}
+                        {activeGameName}
                       </h3>
 
                       <div className="mt-5 flex max-w-[560px] flex-wrap justify-center gap-2 lg:justify-start">
@@ -319,8 +326,8 @@ export default function StatisticsSection() {
                       </div>
 
                       <div className="mt-6 max-w-[560px] rounded-[24px] border border-blue-100 bg-white/78 p-5 text-lg leading-8 text-slate-700 shadow-[0_14px_34px_rgba(37,99,235,0.10)] md:p-6 md:text-xl md:leading-9">
-                        {activeGame.description ? (
-                          <p>{activeGame.description}</p>
+                        {activeGameDescription ? (
+                          <p>{activeGameDescription}</p>
                         ) : (
                           <p>{t('stats.noGames')}</p>
                         )}
@@ -334,7 +341,7 @@ export default function StatisticsSection() {
                                 href={activeGame.googlePlayUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                aria-label={`Download ${activeGame.name} on Google Play`}
+                                aria-label={`Download ${activeGameName} on Google Play`}
                                 className="inline-flex items-center justify-center transition hover:-translate-y-0.5"
                               >
                                 <img
@@ -350,7 +357,7 @@ export default function StatisticsSection() {
                                 href={activeGame.appStoreUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                aria-label={`Download ${activeGame.name} on the App Store`}
+                                aria-label={`Download ${activeGameName} on the App Store`}
                                 className="inline-flex items-center justify-center transition hover:-translate-y-0.5"
                               >
                                 <img
@@ -401,7 +408,7 @@ export default function StatisticsSection() {
                         <button
                           key={game._id}
                           type="button"
-                          aria-label={`Go to ${game.name}`}
+                          aria-label={`Go to ${getLocalizedText(game, language, "name")}`}
                           onClick={() => setActiveGameIndex(index)}
                           className={`h-2.5 rounded-full transition-all ${
                             index === activeGameIndex ? 'w-7 bg-blue-600' : 'w-2.5 bg-blue-200'

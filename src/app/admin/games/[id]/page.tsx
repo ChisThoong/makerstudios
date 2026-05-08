@@ -23,6 +23,7 @@ export default function EditGamePage() {
   const params = useParams();
   const gameId = params.id as string;
 
+  const [activeLocale, setActiveLocale] = useState<"vi" | "en">("vi");
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [url, setUrl] = useState("");
@@ -31,6 +32,10 @@ export default function EditGamePage() {
   const [banner, setBanner] = useState("");
   const [logo, setLogo] = useState("");
   const [description, setDescription] = useState("");
+  const [translations, setTranslations] = useState({
+    vi: { name: "", description: "" },
+    en: { name: "", description: "" },
+  });
   const [status, setStatus] = useState<"active" | "inactive">("active");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [tags, setTags] = useState<string[]>([]);
@@ -68,6 +73,16 @@ export default function EditGamePage() {
           setBanner(game.banner || "");
           setLogo(game.logo || "");
           setDescription(game.description || "");
+          setTranslations({
+            vi: {
+              name: game.translations?.vi?.name || game.name || "",
+              description: game.translations?.vi?.description || game.description || "",
+            },
+            en: {
+              name: game.translations?.en?.name || "",
+              description: game.translations?.en?.description || "",
+            },
+          });
           setStatus(game.status || "active");
           setSelectedCategories(game.categories || []);
           setTags(game.tags || []);
@@ -117,7 +132,10 @@ export default function EditGamePage() {
   };
 
   const handleUpdate = async () => {
-    if (!name || !url) {
+    const primaryName = translations.vi.name || name;
+    const primaryDescription = translations.vi.description || description;
+
+    if (!primaryName || !url) {
       toast.error("Name and URL are required");
       return;
     }
@@ -129,14 +147,15 @@ export default function EditGamePage() {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name,
+          name: primaryName,
           slug,
           url,
           googlePlayUrl,
           appStoreUrl,
           banner,
           logo,
-          description,
+          description: primaryDescription,
+          translations,
           status,
           categories: selectedCategories,
           tags,
@@ -235,17 +254,44 @@ export default function EditGamePage() {
             </div>
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 space-y-6">
+              <div className="flex w-fit rounded-lg border border-blue-100 bg-blue-50 p-1">
+                {(["vi", "en"] as const).map((locale) => (
+                  <button
+                    key={locale}
+                    type="button"
+                    onClick={() => setActiveLocale(locale)}
+                    className={`rounded-md px-4 py-2 text-sm font-semibold transition ${
+                      activeLocale === locale
+                        ? "bg-blue-600 text-white shadow-sm"
+                        : "text-blue-700 hover:bg-white"
+                    }`}
+                  >
+                    {locale === "vi" ? "Tiếng Việt" : "English"}
+                  </button>
+                ))}
+              </div>
+
               {/* Name */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Game Name *
+                  Game Name ({activeLocale.toUpperCase()}) *
                 </label>
                 <input
                   type="text"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
                   placeholder="Enter game name..."
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  value={translations[activeLocale].name}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setTranslations((current) => ({
+                      ...current,
+                      [activeLocale]: {
+                        ...current[activeLocale],
+                        name: value,
+                      },
+                    }));
+                    if (activeLocale === "vi") setName(value);
+                  }}
                   required
                 />
               </div>
@@ -331,8 +377,18 @@ export default function EditGamePage() {
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                   rows={4}
                   placeholder="Brief description of the game (optional)..."
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  value={translations[activeLocale].description}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setTranslations((current) => ({
+                      ...current,
+                      [activeLocale]: {
+                        ...current[activeLocale],
+                        description: value,
+                      },
+                    }));
+                    if (activeLocale === "vi") setDescription(value);
+                  }}
                 />
               </div>
             </div>

@@ -35,6 +35,10 @@ export interface Author {
     publishDate: string;
     excerpt?: string;
     content?: string;
+    translations?: {
+      vi?: { title?: string; content?: string; excerpt?: string };
+      en?: { title?: string; content?: string; excerpt?: string };
+    };
     author?: {
       name?: string;
       role?: string;

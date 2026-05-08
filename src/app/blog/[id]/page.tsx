@@ -1,13 +1,15 @@
 import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
 import BlogPostDetail from "../components/blog-post-detail";
-import { BlogPost, RecentPost } from "../types/blog";
+import { ApiPost, BlogPost, RecentPost } from "../types/blog";
+import { getLocalizedText, LanguageCode } from "../../utils/localized-content";
 
 type Props = {
   params: Promise<{ id: string }>;
 };
 
 // Hàm lấy thông tin 1 bài post
-async function getPost(id: string): Promise<BlogPost | null> {
+async function getPost(id: string, language: LanguageCode): Promise<BlogPost | null> {
   try {
    
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
@@ -51,9 +53,9 @@ async function getPost(id: string): Promise<BlogPost | null> {
         month: "long",
         year: "numeric",
       }),
-      title: data.title,
-      excerpt: data.excerpt || "",
-      content: data.content || "",
+      title: getLocalizedText(data, language, "title"),
+      excerpt: getLocalizedText(data, language, "excerpt") || data.excerpt || "",
+      content: getLocalizedText(data, language, "content") || data.content || "",
       author: {
         name: data.author?.name || "Admin",
         role: data.author?.role || "",
@@ -72,7 +74,7 @@ async function getPost(id: string): Promise<BlogPost | null> {
 }
 
 // Hàm lấy dữ liệu sidebar
-async function getSidebarData() {
+async function getSidebarData(language: LanguageCode) {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     const url = `${baseUrl}/api/blog`;
@@ -90,17 +92,17 @@ async function getSidebarData() {
     }
 
     const data = await res.json();
-    const posts = data.posts || [];
+    const posts: ApiPost[] = data.posts || [];
 
     // Filter only published and public posts
     const publishedPosts = posts.filter(
-      (p: any) => p.status === "published" && p.visibility === "public"
+      (p) => p.status === "published" && p.visibility === "public"
     );
 
-    const recentPosts: RecentPost[] = publishedPosts.slice(0, 3).map((p: any) => ({
+    const recentPosts: RecentPost[] = publishedPosts.slice(0, 3).map((p) => ({
       id: p._id,
       slug: p._id,
-      title: p.title,
+      title: getLocalizedText(p, language, "title"),
       date: new Date(p.publishDate).toLocaleDateString("vi-VN", {
         day: "numeric",
         month: "long",
@@ -110,7 +112,7 @@ async function getSidebarData() {
     }));
 
     const categories = Array.from(
-      new Set(publishedPosts.map((p: any) => p.categories?.[0]).filter(Boolean))
+      new Set(publishedPosts.map((p) => p.categories?.[0]).filter(Boolean))
     ) as string[];
 
     return { recentPosts, categories };
@@ -124,17 +126,18 @@ async function getSidebarData() {
 // Main component
 export default async function BlogDetailPage({ params }: Props) {
   const { id } = await params;
+  const language = ((await cookies()).get("language")?.value === "en" ? "en" : "vi") as LanguageCode;
   
   console.log('Blog Detail Page - Post ID:', id);
   
-  const post = await getPost(id);
+  const post = await getPost(id, language);
   
   if (!post) {
     console.log('Post not found, calling notFound()');
     notFound();
   }
 
-  const { recentPosts, categories } = await getSidebarData();
+  const { recentPosts, categories } = await getSidebarData(language);
 
   return (
     <BlogPostDetail
@@ -148,7 +151,8 @@ export default async function BlogDetailPage({ params }: Props) {
 // Metadata (optional)
 export async function generateMetadata({ params }: Props) {
   const { id } = await params;
-  const post = await getPost(id);
+  const language = ((await cookies()).get("language")?.value === "en" ? "en" : "vi") as LanguageCode;
+  const post = await getPost(id, language);
   
   if (!post) {
     return {
