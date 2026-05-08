@@ -338,11 +338,11 @@ export default function NewGamePage() {
               </button>
             </div>
 
-            <div className="space-y-2 max-h-64 overflow-y-auto">
+            <div className="grid max-h-64 grid-cols-2 gap-2 overflow-y-auto">
               {categories.map((cat) => (
                 <label
                   key={cat}
-                  className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors"
+                  className="flex min-w-0 items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors"
                 >
                   <input
                     type="checkbox"
@@ -350,7 +350,7 @@ export default function NewGamePage() {
                     onChange={() => toggleCategory(cat)}
                     className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
                   />
-                  <span className="text-sm text-gray-700">{cat}</span>
+                  <span className="truncate text-sm text-gray-700">{cat}</span>
                 </label>
               ))}
             </div>
