@@ -37,8 +37,8 @@ interface ApiPost {
   excerpt?: string;
   content?: string;
   translations?: {
-    vi?: { title?: string; content?: string; excerpt?: string };
-    en?: { title?: string; content?: string; excerpt?: string };
+    vi?: { title?: string; content?: string; excerpt?: string; featuredImage?: string };
+    en?: { title?: string; content?: string; excerpt?: string; featuredImage?: string };
   };
   author?: {
     name?: string;
@@ -98,7 +98,7 @@ export default function Section4() {
       // Transform API data to match component structure
       const transformedPosts: BlogPost[] = publishedPosts.slice(0, 6).map((post: ApiPost, index: number) => ({
         id: post._id,
-        image: post.featuredImage || 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=600&h=400&fit=crop',
+        image: getLocalizedText(post, language, 'featuredImage') || post.featuredImage || 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=600&h=400&fit=crop',
         category: post.categories?.[0] || t('blog.uncategorized'),
         date: new Date(post.publishDate).toLocaleDateString(language === 'vi' ? 'vi-VN' : 'en-US', { 
           month: 'long', 
@@ -221,11 +221,7 @@ export default function Section4() {
                       {post.category}
                     </span>
                     <span className="text-gray-400 text-xs font-medium">
-                      {new Date(post.date).toLocaleDateString(language === 'vi' ? 'vi-VN' : 'en-US', {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "numeric",
-                      })}
+                      {post.date}
                     </span>
                   </div>
 

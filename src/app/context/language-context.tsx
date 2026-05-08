@@ -141,6 +141,7 @@ const translations = {
     'blogPage.recentPosts': 'Bài viết gần đây',
     'blogPage.categories': 'Danh mục',
     'blogPage.readMore': 'Đọc thêm',
+    'blogPage.back': 'Quay lại',
 
     'contact.badge': 'Liên hệ với chúng tôi',
     'contact.title': 'Bạn có câu hỏi nào không?',
@@ -322,6 +323,7 @@ const translations = {
     'blogPage.recentPosts': 'Recent Posts',
     'blogPage.categories': 'Categories',
     'blogPage.readMore': 'Read More',
+    'blogPage.back': 'Back',
 
     'contact.badge': 'Contact Us',
     'contact.title': 'Do you have any question?',

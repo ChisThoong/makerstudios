@@ -7,12 +7,10 @@ import {
   LayoutGrid,
   Newspaper,
   Gamepad2,
-  Layers,
   LogOut,
   Menu,
   X,
   MailCheck,
-  Contact,
 } from "lucide-react";
 
 export default function AdminSidebar() {
@@ -35,26 +33,26 @@ export default function AdminSidebar() {
       href: "/admin/games",
       icon: <Gamepad2 className="w-5 h-5" />,
     },
-    {
-      label: "Technology Stack",
-      href: "/admin/technology-stack",
-      icon: <Layers className="w-5 h-5" />,
-    },
+    // {
+    //   label: "Technology Stack",
+    //   href: "/admin/technology-stack",
+    //   icon: <Layers className="w-5 h-5" />,
+    // },
     {
       label: "Subscibers",
       href: "/admin/subscribers",
       icon: <MailCheck className="w-5 h-5" />,
     },
-    {
-      label: "Contacts",
-      href: "/admin/contacts",
-      icon: <Contact className="w-5 h-5" />,
-    },
-    {
-      label: "Jobs",
-      href: "/admin/jobs",
-      icon: <Contact className="w-5 h-5" />,
-    },
+    // {
+    //   label: "Contacts",
+    //   href: "/admin/contacts",
+    //   icon: <Contact className="w-5 h-5" />,
+    // },
+    // {
+    //   label: "Jobs",
+    //   href: "/admin/jobs",
+    //   icon: <Contact className="w-5 h-5" />,
+    // },
   ];
 
   const isActive = (href: string) =>

@@ -1,6 +1,7 @@
 "use client";
 
-import { useEditor, EditorContent } from "@tiptap/react";
+import { useRef, useState } from "react";
+import { useEditor, EditorContent, type Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
 import Link from "@tiptap/extension-link";
@@ -23,6 +24,8 @@ import {
   Minus,
   Link2,
   Image as ImageIcon,
+  Upload,
+  X,
   Undo,
   Redo,
   Type,
@@ -73,7 +76,57 @@ export default function BlogEditor({ value, onChange }: Props) {
   );
 }
 
-function Toolbar({ editor }: { editor: any }) {
+function Toolbar({ editor }: { editor: Editor }) {
+  const imageInputRef = useRef<HTMLInputElement | null>(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
+  const [imageUrl, setImageUrl] = useState("");
+  const [imageError, setImageError] = useState("");
+
+  const insertImageUrl = () => {
+    const trimmed = imageUrl.trim();
+    if (!trimmed) {
+      setImageError("Please enter an image URL.");
+      return;
+    }
+
+    editor.chain().focus().setImage({ src: trimmed }).run();
+    setImageUrl("");
+    setImageError("");
+    setIsImageDialogOpen(false);
+  };
+
+  const uploadEditorImage = async (file?: File) => {
+    if (!file) return;
+
+    setUploadingImage(true);
+    setImageError("");
+
+    try {
+      const form = new FormData();
+      form.append("file", file);
+
+      const response = await fetch("/api/upload-image", {
+        method: "POST",
+        body: form,
+      });
+      const data = (await response.json()) as { url?: string; message?: string };
+
+      if (!response.ok || !data.url) {
+        throw new Error(data.message || "Upload failed");
+      }
+
+      editor.chain().focus().setImage({ src: data.url }).run();
+      setImageUrl("");
+      setIsImageDialogOpen(false);
+    } catch (err) {
+      setImageError(err instanceof Error ? err.message : "Unable to upload image");
+    } finally {
+      setUploadingImage(false);
+      if (imageInputRef.current) imageInputRef.current.value = "";
+    }
+  };
+
   return (
     <div className="flex flex-wrap items-center gap-1 border-b border-gray-200 p-3 bg-gradient-to-b from-gray-50 to-white">
       {/* History */}
@@ -239,14 +292,94 @@ function Toolbar({ editor }: { editor: any }) {
         </ToolbarButton>
         <ToolbarButton
           onClick={() => {
-            const url = prompt("Enter image URL");
-            if (url) editor.chain().focus().setImage({ src: url }).run();
+            setImageError("");
+            setIsImageDialogOpen(true);
           }}
-          tooltip="Insert Image"
+          disabled={uploadingImage}
+          tooltip={uploadingImage ? "Uploading image" : "Insert Image"}
         >
           <ImageIcon className="w-4 h-4" />
         </ToolbarButton>
+        <input
+          ref={imageInputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={(event) => uploadEditorImage(event.target.files?.[0])}
+        />
       </div>
+
+      {isImageDialogOpen && (
+        <div
+          className="fixed inset-0 z-[70] flex items-center justify-center bg-slate-950/45 px-4 py-6"
+          onClick={() => setIsImageDialogOpen(false)}
+        >
+          <div
+            className="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-5 shadow-2xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="mb-4 flex items-center justify-between gap-4">
+              <div>
+                <h3 className="text-lg font-bold text-gray-900">Insert Image</h3>
+                <p className="mt-1 text-sm text-gray-500">Paste an image URL or upload from your computer.</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsImageDialogOpen(false)}
+                className="rounded-lg p-2 text-gray-500 transition hover:bg-gray-100 hover:text-gray-900"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <label className="mb-2 block text-sm font-semibold text-gray-700">
+              Image URL
+            </label>
+            <input
+              type="url"
+              value={imageUrl}
+              onChange={(event) => {
+                setImageUrl(event.target.value);
+                setImageError("");
+              }}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  event.preventDefault();
+                  insertImageUrl();
+                }
+              }}
+              placeholder="https://example.com/image.jpg"
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:border-transparent focus:ring-2 focus:ring-blue-500"
+              autoFocus
+            />
+
+            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <button
+                type="button"
+                onClick={insertImageUrl}
+                className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
+              >
+                Insert URL
+              </button>
+              <button
+                type="button"
+                disabled={uploadingImage}
+                onClick={() => imageInputRef.current?.click()}
+                className="inline-flex items-center justify-center gap-2 rounded-lg border border-blue-200 bg-white px-4 py-3 text-sm font-semibold text-blue-600 transition hover:border-blue-400 hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <Upload className="h-4 w-4" />
+                {uploadingImage ? "Uploading..." : "Import Image"}
+              </button>
+            </div>
+
+            {imageError && (
+              <p className="mt-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
+                {imageError}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

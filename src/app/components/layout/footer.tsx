@@ -10,8 +10,8 @@ interface ApiPost {
   _id: string;
   title: string;
   translations?: {
-    vi?: { title?: string; content?: string; excerpt?: string };
-    en?: { title?: string; content?: string; excerpt?: string };
+    vi?: { title?: string; content?: string; excerpt?: string; featuredImage?: string };
+    en?: { title?: string; content?: string; excerpt?: string; featuredImage?: string };
   };
   featuredImage?: string;
   publishDate?: string;
@@ -74,6 +74,7 @@ export default function Footer() {
               id: post._id,
               title: getLocalizedText(post, language, 'title'),
               image:
+                getLocalizedText(post, language, 'featuredImage') ||
                 post.featuredImage ||
                 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=200',
               date: date

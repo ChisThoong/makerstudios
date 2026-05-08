@@ -36,8 +36,8 @@ export interface Author {
     excerpt?: string;
     content?: string;
     translations?: {
-      vi?: { title?: string; content?: string; excerpt?: string };
-      en?: { title?: string; content?: string; excerpt?: string };
+      vi?: { title?: string; content?: string; excerpt?: string; featuredImage?: string };
+      en?: { title?: string; content?: string; excerpt?: string; featuredImage?: string };
     };
     author?: {
       name?: string;

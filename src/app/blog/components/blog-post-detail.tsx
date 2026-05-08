@@ -7,6 +7,7 @@ import PostDetailHeader from "./post-detail-header";
 import PostMeta from "./post-meta";
 import PostContent from "./post-content";
 import BlogSidebar from "./blog-sidebar";
+import { useLanguage } from "../../context/language-context";
 
 interface Props {
   post: BlogPost;
@@ -20,6 +21,7 @@ export default function BlogPostDetail({
   categories,
 }: Props) {
   const router = useRouter();
+  const { t } = useLanguage();
 
   return (
     <div className="min-h-screen bg-gray-50 pt-20 pb-40">
@@ -29,7 +31,7 @@ export default function BlogPostDetail({
           className="flex items-center gap-2 text-blue-600 mb-6"
         >
           <ArrowLeft size={20} />
-          Quay lại
+          {t('blogPage.back')}
         </button>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

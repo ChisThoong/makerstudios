@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import ImageUrlUpload from "@/src/app/components/admin/image-url-upload";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -443,35 +444,17 @@ export default function TechStackPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="imageUrl">Image URL *</Label>
-                <Input
-                  id="imageUrl"
-                  type="url"
-                  placeholder="https://example.com/logo.png"
+                <ImageUrlUpload
+                  label="Image URL *"
                   value={formData.imageUrl}
-                  onChange={(e) =>
-                    setFormData({ ...formData, imageUrl: e.target.value })
-                  }
+                  onChange={(value) => setFormData({ ...formData, imageUrl: value })}
+                  placeholder="https://example.com/logo.png"
+                  uploadLabel="Upload Logo"
+                  previewAlt="Preview"
+                  previewClassName="h-20 object-contain"
                   required
                 />
               </div>
-
-              {formData.imageUrl && (
-                <div className="space-y-2">
-                  <Label>Preview</Label>
-                  <div className="border rounded-lg p-4 bg-gray-50">
-                    <img
-                      src={formData.imageUrl}
-                      alt="Preview"
-                      className="w-16 h-16 object-contain mx-auto"
-                      onError={(e) => {
-                        e.currentTarget.src = "";
-                        e.currentTarget.alt = "Invalid image URL";
-                      }}
-                    />
-                  </div>
-                </div>
-              )}
             </div>
 
             <DialogFooter>
@@ -520,35 +503,17 @@ export default function TechStackPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="edit-imageUrl">Image URL *</Label>
-                <Input
-                  id="edit-imageUrl"
-                  type="url"
-                  placeholder="https://example.com/logo.png"
+                <ImageUrlUpload
+                  label="Image URL *"
                   value={formData.imageUrl}
-                  onChange={(e) =>
-                    setFormData({ ...formData, imageUrl: e.target.value })
-                  }
+                  onChange={(value) => setFormData({ ...formData, imageUrl: value })}
+                  placeholder="https://example.com/logo.png"
+                  uploadLabel="Upload Logo"
+                  previewAlt="Preview"
+                  previewClassName="h-20 object-contain"
                   required
                 />
               </div>
-
-              {formData.imageUrl && (
-                <div className="space-y-2">
-                  <Label>Preview</Label>
-                  <div className="border rounded-lg p-4 bg-gray-50">
-                    <img
-                      src={formData.imageUrl}
-                      alt="Preview"
-                      className="w-16 h-16 object-contain mx-auto"
-                      onError={(e) => {
-                        e.currentTarget.src = "";
-                        e.currentTarget.alt = "Invalid image URL";
-                      }}
-                    />
-                  </div>
-                </div>
-              )}
             </div>
 
             <DialogFooter>

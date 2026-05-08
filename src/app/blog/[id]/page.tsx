@@ -46,7 +46,7 @@ async function getPost(id: string, language: LanguageCode): Promise<BlogPost | n
     const post: BlogPost = {
       id: data._id,
       slug: data.slug || data._id,
-      image: data.featuredImage || "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=800",
+      image: getLocalizedText(data, language, "featuredImage") || data.featuredImage || "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=800",
       category: data.categories?.[0] || "Uncategorized",
       date: new Date(data.publishDate).toLocaleDateString("vi-VN", {
         day: "numeric",
@@ -108,7 +108,7 @@ async function getSidebarData(language: LanguageCode) {
         month: "long",
         year: "numeric",
       }),
-      image: p.featuredImage || "",
+      image: getLocalizedText(p, language, "featuredImage") || p.featuredImage || "",
     }));
 
     const categories = Array.from(

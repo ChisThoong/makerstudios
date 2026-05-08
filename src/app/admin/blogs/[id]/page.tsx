@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import BlogEditor from "@/src/app/components/admin/blog-editor";
+import ImageUrlUpload from "@/src/app/components/admin/image-url-upload";
 import { toast } from "sonner";
 
 import {
@@ -13,8 +14,7 @@ import {
   X,
   Save,
   FileText,
-  Upload,
-  Image as ImageIcon,
+  ArrowLeft,
 } from "lucide-react";
 
 export default function EditBlogPage() {
@@ -28,8 +28,8 @@ export default function EditBlogPage() {
   const [slug, setSlug] = useState("");
   const [excerpt, setExcerpt] = useState("");
   const [translations, setTranslations] = useState({
-    vi: { title: "", content: "", excerpt: "" },
-    en: { title: "", content: "", excerpt: "" },
+    vi: { title: "", content: "", excerpt: "", featuredImage: "" },
+    en: { title: "", content: "", excerpt: "", featuredImage: "" },
   });
   const [featuredImage, setFeaturedImage] = useState("");
   const [publishDate, setPublishDate] = useState("");
@@ -58,8 +58,8 @@ export default function EditBlogPage() {
     slug?: string;
     excerpt?: string;
     translations?: {
-      vi?: { title?: string; content?: string; excerpt?: string };
-      en?: { title?: string; content?: string; excerpt?: string };
+      vi?: { title?: string; content?: string; excerpt?: string; featuredImage?: string };
+      en?: { title?: string; content?: string; excerpt?: string; featuredImage?: string };
     };
     featuredImage?: string;
     publishDate?: string;
@@ -87,11 +87,13 @@ export default function EditBlogPage() {
               title: found.translations?.vi?.title || found.title || "",
               content: found.translations?.vi?.content || found.content || "",
               excerpt: found.translations?.vi?.excerpt || found.excerpt || "",
+              featuredImage: found.translations?.vi?.featuredImage || found.featuredImage || "",
             },
             en: {
               title: found.translations?.en?.title || "",
               content: found.translations?.en?.content || "",
               excerpt: found.translations?.en?.excerpt || "",
+              featuredImage: found.translations?.en?.featuredImage || "",
             },
           });
           setFeaturedImage(found.featuredImage || "");
@@ -143,6 +145,7 @@ export default function EditBlogPage() {
     const primaryTitle = translations.vi.title || title;
     const primaryContent = translations.vi.content || content;
     const primaryExcerpt = translations.vi.excerpt || excerpt;
+    const primaryFeaturedImage = translations.vi.featuredImage || featuredImage;
 
     setSaving(true);
 
@@ -155,7 +158,7 @@ export default function EditBlogPage() {
         content: primaryContent,
         excerpt: primaryExcerpt,
         translations,
-        featuredImage,
+        featuredImage: primaryFeaturedImage,
         publishDate,
         status: saveStatus,
         categories: selectedCategories,
@@ -193,12 +196,22 @@ export default function EditBlogPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="flex">
+      <div className="flex flex-col xl:flex-row">
         {/* Main Content Area */}
-        <div className="flex-1 p-8">
-          <div className="max-w-4xl mx-auto">
-            <div className="mb-6 flex items-center justify-between">
-              <h1 className="text-3xl font-bold text-gray-900">Edit Post</h1>
+        <div className="min-w-0 flex-1 p-4 sm:p-6 lg:p-8">
+          <div className="w-full">
+            <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <button
+                  type="button"
+                  onClick={() => router.push("/admin/blogs")}
+                  className="mb-3 flex items-center gap-2 text-sm font-medium text-gray-600 transition-colors hover:text-gray-900"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  Back to Posts
+                </button>
+                <h1 className="text-3xl font-bold text-gray-900">Edit Post</h1>
+              </div>
               <div className="flex gap-3">
                 <button
                   onClick={() => handleSubmit("draft")}
@@ -219,7 +232,7 @@ export default function EditBlogPage() {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 space-y-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 lg:p-8 space-y-6">
               <div className="flex w-fit rounded-lg border border-blue-100 bg-blue-50 p-1">
                 {(["vi", "en"] as const).map((locale) => (
                   <button
@@ -324,7 +337,7 @@ export default function EditBlogPage() {
         </div>
 
         {/* Sidebar */}
-        <div className="w-96 bg-white border-l border-gray-200 p-6 space-y-6 ">
+        <div className="w-full border-t border-gray-200 bg-white p-4 sm:p-6 xl:w-[360px] xl:shrink-0 xl:border-l xl:border-t-0 2xl:w-[400px] space-y-6">
           {/* Publish Settings */}
           <div className="pb-6 border-b border-gray-200">
             <h3 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
@@ -438,40 +451,21 @@ export default function EditBlogPage() {
 
           {/* Featured Image */}
           <div className="pb-6 border-b border-gray-200">
-            <h3 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <ImageIcon className="w-4 h-4" />
-              Featured Image
-            </h3>
-
-            {featuredImage ? (
-              <div className="relative group">
-                <img
-                  src={featuredImage}
-                  alt="Featured"
-                  className="w-full h-48 object-cover rounded-lg"
-                />
-                <button
-                  onClick={() => setFeaturedImage("")}
-                  className="absolute top-2 right-2 p-2 bg-red-600 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-            ) : (
-              <div>
-                <input
-                  type="text"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm mb-2"
-                  placeholder="Enter image URL..."
-                  value={featuredImage}
-                  onChange={(e) => setFeaturedImage(e.target.value)}
-                />
-                <button className="w-full px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 text-gray-600 hover:text-blue-600 transition-colors flex items-center justify-center gap-2">
-                  <Upload className="w-5 h-5" />
-                  <span className="text-sm font-medium">Upload Image</span>
-                </button>
-              </div>
-            )}
+            <ImageUrlUpload
+              label={`Featured Image (${activeLocale.toUpperCase()})`}
+              value={translations[activeLocale].featuredImage}
+              onChange={(value) => {
+                setTranslations((current) => ({
+                  ...current,
+                  [activeLocale]: { ...current[activeLocale], featuredImage: value },
+                }));
+                if (activeLocale === "vi") setFeaturedImage(value);
+              }}
+              placeholder="Enter image URL..."
+              uploadLabel="Upload Image"
+              previewAlt="Featured"
+              previewClassName="h-48 object-cover"
+            />
           </div>
 
           {/* Visibility */}

@@ -3,6 +3,7 @@
 import { useState, KeyboardEvent } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import ImageUrlUpload from "./image-url-upload";
 import {
   Save,
   FileText,
@@ -61,7 +62,7 @@ export default function JobForm({ mode, initialData }: JobFormProps) {
     jobSkills: initialData?.jobSkills || [],
   });
 
-  function update(key: string, value: any) {
+  function update(key: keyof typeof form, value: string | string[]) {
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
@@ -123,10 +124,10 @@ export default function JobForm({ mode, initialData }: JobFormProps) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="flex">
+      <div className="flex flex-col xl:flex-row">
         {/* MAIN CONTENT */}
-        <div className="flex-1 p-6 lg:p-8 overflow-y-auto">
-          <div className="max-w-5xl mx-auto">
+        <div className="min-w-0 flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
+          <div className="w-full">
             {/* Header */}
             <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">
@@ -158,7 +159,7 @@ export default function JobForm({ mode, initialData }: JobFormProps) {
             </div>
 
             {/* Content */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 lg:p-8 space-y-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 lg:p-8 space-y-6">
               {/* Title */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -251,7 +252,7 @@ export default function JobForm({ mode, initialData }: JobFormProps) {
         </div>
 
         {/* SIDEBAR */}
-        <div className="w-80 lg:w-96 bg-white border-l border-gray-200 p-6 space-y-6 overflow-y-auto">
+        <div className="w-full border-t border-gray-200 bg-white p-4 sm:p-6 xl:w-[360px] xl:shrink-0 xl:border-l xl:border-t-0 2xl:w-[400px] space-y-6 overflow-y-auto">
           <h2 className="text-lg font-bold text-gray-900 mb-4">Job Settings</h2>
 
           {/* Category */}
@@ -380,26 +381,15 @@ export default function JobForm({ mode, initialData }: JobFormProps) {
 
           {/* Banner Image */}
           <SidebarBox title="Banner Image" icon={<Briefcase className="w-4 h-4" />}>
-            <input
-              disabled={isView}
-              type="url"
+            <ImageUrlUpload
               value={form.bannerImage}
-              onChange={(e) => update("bannerImage", e.target.value)}
+              onChange={(value) => update("bannerImage", value)}
               placeholder="https://example.com/image.jpg"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-50 disabled:text-gray-500 text-sm"
+              uploadLabel="Upload Banner"
+              previewAlt="Banner preview"
+              previewClassName="h-40 object-cover"
+              disabled={isView}
             />
-            {form.bannerImage && (
-              <div className="mt-3 relative rounded-lg overflow-hidden border border-gray-200">
-                <img
-                  src={form.bannerImage}
-                  alt="Banner preview"
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Crect fill='%23f3f4f6' width='400' height='200'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' fill='%239ca3af' font-family='sans-serif' font-size='14'%3EImage not found%3C/text%3E%3C/svg%3E";
-                  }}
-                />
-              </div>
-            )}
             <p className="text-xs text-gray-500 mt-2">
               Recommended: 800x800px, max 2MB
             </p>

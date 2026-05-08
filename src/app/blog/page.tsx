@@ -36,6 +36,7 @@ export default function BlogPage() {
           id: post._id,
           slug: post._id,
           image:
+            getLocalizedText(post, language, "featuredImage") ||
             post.featuredImage ||
             "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=800",
           category: post.categories?.[0] || t('blog.uncategorized'),
